@@ -11,7 +11,7 @@ import sys
 
 sys.path.append(os.path.abspath('../'))
 
-from PyQt5.QtWidgets import QApplication
+from PyQt4.QtGui import QApplication
 
 from Common.ui.window import FWindow
 from Common.cmain import cmain

@@ -4,8 +4,7 @@
 from __future__ import (unicode_literals, absolute_import, division,
                         print_function)
 
-from PyQt5.QtGui import QIcon
-from PyQt5 import Qt
+from PyQt4.QtGui import QIcon
 
 from Common.ui.common import FMainWindow
 
