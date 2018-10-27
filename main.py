@@ -18,12 +18,14 @@ from Common.cmain import cmain
 
 from migrations import make_migrate
 from ui.mainwindow import MainWindow
+from Common.ui.qss import theme
 
 app = QApplication(sys.argv)
 
 
 def main():
     window = MainWindow()
+    window.setStyleSheet(theme)
     setattr(FWindow, 'window', window)
     # window.show()
     window.showMaximized()

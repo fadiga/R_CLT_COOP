@@ -5,12 +5,14 @@ from __future__ import (unicode_literals, absolute_import, division,
                         print_function)
 
 from PyQt4.QtGui import QIcon
+from PyQt4.QtCore import Qt
 
 from Common.ui.common import FMainWindow
 
 from configuration import Config
 
-# from ui.menutoolbar import MenuToolBar
+from ui.dashboard import DashbordViewWidget
+from ui.menutoolbar import MenuToolBar
 from ui.menubar import MenuBar
 
 
@@ -23,12 +25,10 @@ class MainWindow(FMainWindow):
             'logo', QIcon(u"{}".format(Config.APP_LOGO))))
         self.menubar = MenuBar(self)
         self.setMenuBar(self.menubar)
-        # self.toolbar = MenuToolBar(self)
-        # self.addToolBar(Qt.LeftToolBarArea, self.toolbar)
+        self.toolbar = MenuToolBar(self)
+        self.addToolBar(Qt.LeftToolBarArea, self.toolbar)
 
-        # self.page = DebtsViewWidget
-
-        # self.change_context(self.page)
+        self.change_context(DashbordViewWidget)
 
     def page_width(self):
         return self.width() - 100
