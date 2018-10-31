@@ -43,9 +43,17 @@ class CheckList(BaseModel):
     is_existe_bank_account = BooleanField(default=False)
     no_plurality_mandates = BooleanField(default=False)
     is_existe_registre_pv = BooleanField(default=False)
+    forme_scoop_status = IntegerField(null=True)
+    forme_scoop_ri = IntegerField(null=True)
+    denomination_status = IntegerField(null=True)
+    denomination_ri = IntegerField(null=True)
+    nature_domaine_status = IntegerField(null=True)
+    nature_domaine_ri = IntegerField(null=True)
+    duree_status = IntegerField(null=True)
+    duree_ri = IntegerField(null=True)
 
     def __str__(self):
-        return self.qualite_declarant
+        return "{}/{}".format(self.qualite_declarant, self.forme_scoop_status)
 
 
 class Immatriculation(BaseModel):
@@ -100,6 +108,9 @@ class CooperativeCompanie(BaseModel):
 
     def __str__(self):
         return self.denomination
+
+    def membres(self):
+        return CooperativeMember.select().where(CooperativeMember.scoop == self)
 
 
 class Demande(BaseModel):

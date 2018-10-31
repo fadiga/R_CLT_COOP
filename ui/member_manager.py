@@ -13,19 +13,20 @@ from Common.ui.common import (
     LineEdit, FWidget, FPeriodHolder, FPageTitle, Button)
 from Common.ui.table import FTableWidget
 # from Common.ui.util import (date_to_datetime, date_on_or_end)
+from ui.member_edit_add import EditOrAddMemberDialog
 
 from models import CooperativeMember
 
 
 class MemberManagerWidget(FWidget, FPeriodHolder):
 
-    def __init__(self, parent=0, scoop=None, *args, **kwargs):
+    def __init__(self, parent=0, dmd=None, *args, **kwargs):
         super(MemberManagerWidget, self).__init__(
             parent=parent, *args, **kwargs)
         FPeriodHolder.__init__(self, *args, **kwargs)
 
         self.parent = parent
-        self.scoop = scoop
+        self.dmd = dmd
         self.search_field = LineEdit()
         self.search_field.setPlaceholderText("Rechercher un membre")
         # self.search_field.setMaximumWidth(400)
@@ -34,8 +35,11 @@ class MemberManagerWidget(FWidget, FPeriodHolder):
 
         self.string_list = []
         self.title_field = FPageTitle(
-            "Gestion des membres du {}".format(self.scoop))
+            "Gestion des membres du {}".format(self.dmd.scoop))
 
+        self.end_demande_btt = Button("Fin de l'ajout")
+        self.end_demande_btt.setMaximumWidth(400)
+        self.end_demande_btt.clicked.connect(self.end_add_member)
         self.new_demande_btt = Button("Nouveau Membre")
         self.new_demande_btt.setMaximumWidth(400)
         self.new_demande_btt.setIcon(QIcon.fromTheme('save', QIcon(
@@ -48,6 +52,7 @@ class MemberManagerWidget(FWidget, FPeriodHolder):
         editbox.addWidget(self.search_field, 1, 0)
         editbox.setColumnStretch(1, 1)
         editbox.addWidget(self.new_demande_btt, 1, 3)
+        editbox.addWidget(self.end_demande_btt, 1, 4)
 
         vbox = QVBoxLayout()
         vbox.addWidget(self.title_field)
@@ -55,10 +60,13 @@ class MemberManagerWidget(FWidget, FPeriodHolder):
         vbox.addWidget(self.table)
         self.setLayout(vbox)
 
+    def end_add_member(self):
+        self.dmd.status = self.dmd.add_member
+        self.dmd.save()
+
     def add_member(self):
-        from ui.member_edit_add import EditOrAddMemberDialog
         self.open_dialog(
-            EditOrAddMemberDialog, modal=True, scoop=self.scoop, table_p=self.table)
+            EditOrAddMemberDialog, modal=True, scoop=self.dmd.scoop, table_p=self.table)
 
     def finder(self):
         self.search = self.search_field.lineEdit().text()
@@ -67,10 +75,11 @@ class MemberManagerWidget(FWidget, FPeriodHolder):
 
 class MemberTableWidget(FTableWidget):
 
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, * args, **kwargs):
 
         FTableWidget.__init__(self, parent=parent, *args, **kwargs)
         self.parent = parent
+        self.dmd = self.parent.dmd
         # self.sorter = True
         self.stretch_columns = [0, 1, 2, 3, 4]
         self.align_map = {0: 'l', 1: 'l', 2: 'r', 3: 'r', 4: 'r'}
@@ -85,7 +94,7 @@ class MemberTableWidget(FTableWidget):
         self.hideColumn(len(self.hheaders) - 1)
 
     def set_data_for(self):
-        qs = CooperativeMember.select()
+        qs = self.dmd.scoop.membres()
         # if not isinstance(self.parent.compte, str):
         #     qs = qs.where(Payment.provider_clt == self.parent.compte)
         # else:
@@ -110,4 +119,6 @@ class MemberTableWidget(FTableWidget):
         self.choix = CooperativeMember.filter(id=self.data[row][-1]).get()
         print(self.choix)
         if column != 2:
-            pass
+            self.parent.open_dialog(
+                EditOrAddMemberDialog, modal=True, scoop=self.dmd.scoop,
+                member=self.choix, table_p=self.parent.table)

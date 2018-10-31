@@ -111,7 +111,15 @@ class DemandeTableWidget(FTableWidget):
 
     def click_item(self, row, column, *args):
         self.choix = Demande.filter(id=self.data[row][-1]).get()
+        # status = self.data[row][-2]
         if column == 3:
-            from ui.member_manager import MemberManagerWidget
-            self.parent.change_main_context(
-                MemberManagerWidget, scoop=self.choix)
+            print(type(self.choix.status))
+            status = int(self.choix.status)
+            if status == self.choix.declaration:
+                from ui.member_manager import MemberManagerWidget
+                self.parent.change_main_context(
+                    MemberManagerWidget, dmd=self.choix)
+            if status == self.choix.add_member:
+                from ui.check_list_view import CheckListViewWidget
+                self.parent.change_main_context(
+                    CheckListViewWidget, dmd=self.choix)

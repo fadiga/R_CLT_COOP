@@ -3,12 +3,12 @@
 # maintainer: Fad
 
 from PyQt4.QtCore import QDate
-from PyQt4.QtGui import (QVBoxLayout, QDialog,
+from PyQt4.QtGui import (QVBoxLayout, QDialog, QDateEdit,
                          QTextEdit, QFormLayout, QComboBox)
 
 from Common.ui.util import check_is_empty, field_error
 from Common.ui.common import (
-    FWidget, Button, FormLabel, LineEdit, IntLineEdit, FormatDate)
+    FWidget, Button, FormLabel, LineEdit, IntLineEdit)
 import peewee
 from models import CooperativeMember
 
@@ -30,16 +30,14 @@ class EditOrAddMemberDialog(QDialog, FWidget):
         addres = ""
         nationality = ""
         phone = ""
-        poste = ""
         if self.member:
             self.new = False
             full_name = self.member.full_name
-            sex = self.member.sex
             ddn = self.member.ddn
             addres = self.member.addres
             nationality = self.member.nationality
             phone = str(self.member.phone)
-            sex = self.member.sex
+
             self.title = u"Modification de {}".format(self.member)
             self.succes_msg = u"{} a été bien mise à jour".format(
                 self.member)
@@ -54,7 +52,6 @@ class EditOrAddMemberDialog(QDialog, FWidget):
         # vbox.addWidget(FPageTitle(u"Utilisateur: %s " % self.member.name))
 
         self.full_name_field = LineEdit(full_name)
-        # self.sex_field = LineEdit(self.member.sex)
         self.sex_list = CooperativeMember.SEX
         # Combobox widget
         self.sex_box = QComboBox()
@@ -64,7 +61,8 @@ class EditOrAddMemberDialog(QDialog, FWidget):
             if self.member.sex == value:
                 self.sex_box.setCurrentIndex(index)
 
-        self.ddn_field = FormatDate(ddn)
+        print(type(ddn))
+        self.ddn_field = QDateEdit(ddn)
         self.addres_field = LineEdit(addres)
         self.nationality_field = LineEdit(nationality)
         self.phone_field = IntLineEdit(phone)
