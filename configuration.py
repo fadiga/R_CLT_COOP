@@ -40,15 +40,3 @@ class Config(CConstants):
     # BASE_URL = "http://fadcorp.ml/"
     SERV = True
     EXCLUDE_MENU_ADMIN = ["del_all"]
-    SCOOPS = "a"
-    COOP_CA = "b"
-    UNION = "bv"
-    FEDERATION = "bf"
-    CONFEDERATION = "bc"
-    CATEGORY = {
-        SCOOPS: ("SCOOPS"),
-        COOP_CA: ("COOP CA"),
-        UNION: ("UNION"),
-        FEDERATION: ("Fédération"),
-        CONFEDERATION: ("Confédération"),
-    }

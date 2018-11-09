@@ -69,7 +69,7 @@ class MemberManagerWidget(FWidget, FPeriodHolder):
             EditOrAddMemberDialog, modal=True, scoop=self.dmd.scoop, table_p=self.table)
 
     def finder(self):
-        self.search = self.search_field.lineEdit().text()
+        self.search = self.search_field.text()
         self.table.refresh_()
 
 
@@ -84,7 +84,8 @@ class MemberTableWidget(FTableWidget):
         self.stretch_columns = [0, 1, 2, 3, 4]
         self.align_map = {0: 'l', 1: 'l', 2: 'r', 3: 'r', 4: 'r'}
         self.display_vheaders = False
-        self.hheaders = ["Nom complet", "sexe", "Téléphone", "poste", ""]
+        self.hheaders = ["Nom complet", "sexe",
+                         "Date naissance", "Téléphone", "poste", "", ""]
         self.refresh_()
 
     def refresh_(self):
@@ -95,21 +96,15 @@ class MemberTableWidget(FTableWidget):
 
     def set_data_for(self):
         qs = self.dmd.scoop.membres()
-        # if not isinstance(self.parent.compte, str):
-        #     qs = qs.where(Payment.provider_clt == self.parent.compte)
-        # else:
-        #     self.parent.compte = "Tous"
-        # qs = qs.select().where(
-        #     Payment.status == False, Payment.date <= date_on_or_end(
-        #         self.end_date, on=False), Payment.date >= date_on_or_end(
-        #         self.on_date)).order_by(Payment.date.asc())
-        # self.data = [(pay.denomination, pay.created_date, pay.forme, pay.status, pay.id)
-        #              for pay in qs]
+        qs = qs.select().where(
+            CooperativeMember.full_name.contains(self.parent.search_field.text())).order_by(
+            CooperativeMember.add_date.asc())
         self.data = [(
-            mmb.full_name, mmb.sex, mmb.phone, mmb.poste, mmb.id) for mmb in qs]
+            mmb.full_name, mmb.display_sex(), mmb.ddn, mmb.phone,
+            mmb.display_poste(), mmb.id) for mmb in qs]
 
     def _item_for_data(self, row, column, data, context=None):
-        if column == 3:
+        if column == len(self.data[0]) - 1:
             return QTableWidgetItem(QIcon(
                 u"{}edit.png".format(Config.img_cmedia)), "Edit")
         return super(MemberTableWidget, self)._item_for_data(row, column,
@@ -117,7 +112,6 @@ class MemberTableWidget(FTableWidget):
 
     def click_item(self, row, column, *args):
         self.choix = CooperativeMember.filter(id=self.data[row][-1]).get()
-        print(self.choix)
         if column != 2:
             self.parent.open_dialog(
                 EditOrAddMemberDialog, modal=True, scoop=self.dmd.scoop,

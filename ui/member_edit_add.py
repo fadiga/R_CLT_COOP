@@ -2,17 +2,18 @@
 # -*- coding: utf-8 -*-
 # maintainer: Fad
 
+from datetime import datetime
 from PyQt4.QtCore import QDate
 from PyQt4.QtGui import (QVBoxLayout, QDialog, QDateEdit,
-                         QTextEdit, QFormLayout, QComboBox)
+                         QFormLayout, QComboBox)
 
 from Common.ui.util import check_is_empty, field_error
 from Common.ui.common import (
-    FWidget, Button, FormLabel, LineEdit, IntLineEdit)
+    FWidget, Button, FormLabel, LineEdit, IntLineEdit, FormatDate)
 import peewee
 from models import CooperativeMember
 
-from configuration import Config
+# from configuration import Config
 
 
 class EditOrAddMemberDialog(QDialog, FWidget):
@@ -25,18 +26,22 @@ class EditOrAddMemberDialog(QDialog, FWidget):
         self.scoop = scoop
         self.parent = parent
         full_name = ""
-        sex = ""
-        ddn = QDate.currentDate()
+        self.ddn_field = QDateEdit(QDate(QDate.currentDate()))
+
         addres = ""
         nationality = ""
         phone = ""
         if self.member:
             self.new = False
             full_name = self.member.full_name
-            ddn = self.member.ddn
+            mddn = self.member.ddn
+            if mddn:
+                day, month, year = mddn.split("/")
+                ddn = datetime.strptime(mddn, '%d/%m/%Y')
+                self.ddn_field.setDate(QDate(ddn))
             addres = self.member.addres
             nationality = self.member.nationality
-            phone = str(self.member.phone)
+            phone = str(self.member.phone or "")
 
             self.title = u"Modification de {}".format(self.member)
             self.succes_msg = u"{} a été bien mise à jour".format(
@@ -52,29 +57,29 @@ class EditOrAddMemberDialog(QDialog, FWidget):
         # vbox.addWidget(FPageTitle(u"Utilisateur: %s " % self.member.name))
 
         self.full_name_field = LineEdit(full_name)
-        self.sex_list = CooperativeMember.SEX
+        self.sex_list = CooperativeMember.SEX.items()
         # Combobox widget
         self.sex_box = QComboBox()
-        for index, value in enumerate(self.sex_list):
-            self.sex_box.addItem(
-                "{}".format(self.sex_list[value]))
-            if self.member.sex == value:
-                self.sex_box.setCurrentIndex(index)
 
-        print(type(ddn))
-        self.ddn_field = QDateEdit(ddn)
+        for index, value in enumerate(self.sex_list):
+            # form = self.sex_list[index]
+            self.sex_box.addItem(
+                "{}".format(value[1].upper()), value[0])
+            if self.member.sex == value[0]:
+                self.sex_box.setCurrentIndex(index)
+        # print("DE", ddn)
+        # self.ddn_field.setDate(ddn)
+        # self.ddn_field = QDateEdit(QDate(ddn))
         self.addres_field = LineEdit(addres)
         self.nationality_field = LineEdit(nationality)
         self.phone_field = IntLineEdit(phone)
         # self.phone_field.setInputMask("D9.99.99.99")
-        # self.poste_box = LineEdit(self.member.poste)
-        self.poste_list = CooperativeMember.POSTE
-        # Combobox widget
+        self.poste_list = CooperativeMember.POSTE.items()
         self.poste_box = QComboBox()
         for index, value in enumerate(self.poste_list):
             self.poste_box.addItem(
-                "{}".format(self.poste_list[value]))
-            if self.member.poste == value:
+                "{}".format(value[1].upper()), value[0])
+            if self.member.poste == value[0]:
                 self.poste_box.setCurrentIndex(index)
 
         formbox = QFormLayout()
@@ -95,25 +100,26 @@ class EditOrAddMemberDialog(QDialog, FWidget):
 
     def save_edit(self):
         ''' add operation '''
-        # print("Save")
+        print("Save")
         self.member.scoop = self.scoop
-        # self.member.scoop = self.scoop_field.text()
         self.member.full_name = self.full_name_field.text()
-        self.member.sex = str(self.sex_box.currentText())
+        self.member.sex = self.sex_box.itemData(
+            self.sex_box.currentIndex())
         self.member.ddn = self.ddn_field.text()
         self.member.addres = self.addres_field.text()
         self.member.nationality = self.nationality_field.text()
         phone = self.phone_field.text()
         if phone != "":
             self.member.phone = int(phone)
-        self.member.poste = str(self.poste_box.currentText())
+        self.member.poste = self.poste_box.itemData(
+            self.poste_box.currentIndex())
         # field_error
         if check_is_empty(self.full_name_field):
             return
-        if check_is_empty(self.addres_field):
-            return
-        if check_is_empty(self.nationality_field):
-            return
+        # if check_is_empty(self.addres_field):
+        #     return
+        # if check_is_empty(self.nationality_field):
+        #     return
 
         member = self.member
 
@@ -121,8 +127,9 @@ class EditOrAddMemberDialog(QDialog, FWidget):
             member.save()
             self.close()
             self.table_p.refresh_()
-            self.parent.Notify(u"Le Compte %s a été mise à jour" %
-                               member.full_name, "success")
+            self.parent.Notify(
+                u"Le membre {} ({}) a été mise à jour".format(
+                    member.full_name, member.poste), "success")
         except peewee.IntegrityError:
             field_error(
                 self.full_name_field, "Ce nom existe dans la basse de donnée.")

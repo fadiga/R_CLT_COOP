@@ -23,6 +23,7 @@ class MainWindow(FMainWindow):
 
         self.setWindowIcon(QIcon.fromTheme(
             'logo', QIcon(u"{}".format(Config.APP_LOGO))))
+
         self.menubar = MenuBar(self)
         self.setMenuBar(self.menubar)
         self.toolbar = MenuToolBar(self)

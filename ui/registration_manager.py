@@ -91,15 +91,15 @@ class DemandeTableWidget(FTableWidget):
     def set_data_for(self):
         qs = Demande.select()
         # if not isinstance(self.parent.compte, str):
-        #     qs = qs.where(Payment.provider_clt == self.parent.compte)
+        #     qs = qs.where(Demande.provider_clt == self.parent.compte)
         # else:
         #     self.parent.compte = "Tous"
         # qs = qs.select().where(
-        #     Payment.status == False, Payment.date <= date_on_or_end(
-        #         self.end_date, on=False), Payment.date >= date_on_or_end(
-        #         self.on_date)).order_by(Payment.date.asc())
+        #     Demande.status == False, Demande.date <= date_on_or_end(
+        #         self.end_date, on=False), DemandeTableWidgetde.date >= date_on_or_end(
+        #         self.on_date)).order_by(Demande.date.asc())
         self.data = [(dmd.scoop.denomination, dmd.declaration_date,
-                      dmd.scoop.forme, dmd.status, dmd.scoop.id) for dmd in qs]
+                      dmd.scoop.display_forme(), dmd.status, dmd.scoop.id) for dmd in qs]
 
     def _item_for_data(self, row, column, data, context=None):
         if column == 3:
