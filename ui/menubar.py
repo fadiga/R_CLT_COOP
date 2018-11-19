@@ -16,6 +16,10 @@ from PyQt4.QtCore import SIGNAL
 from configuration import Config
 from Common.ui.common import FWidget
 from Common.ui.cmenubar import FMenuBar
+from ui.dashboard import DashbordViewWidget
+from ui.registration_view import RegistrationViewWidget
+from ui.registration_manager import ResgistrationManagerWidget
+from ui.cooperative_society_view import CooperativeSocietyViewWidget
 
 
 class MenuBar(FMenuBar, FWidget):
@@ -27,8 +31,14 @@ class MenuBar(FMenuBar, FWidget):
         self.parent = parent
 
         menu = [
-            # {"name": u"Statistiques", "icon": 'state', "admin":
-            #  False, "shortcut": "Ctrl+S", "goto": StatisticsViewWidget},
+            {"name": u"Table de Bord", "icon": 'dashboard', "admin":
+             False, "shortcut": "Ctrl+T", "goto": DashbordViewWidget},
+            {"name": u"Ajout demande", "icon": 'demande', "admin":
+             False, "shortcut": "Alt+D", "goto": RegistrationViewWidget},
+            {"name": u"Gestion demande", "icon": 'gestion_dmd', "admin":
+             False, "shortcut": "Ctrl+D", "goto": ResgistrationManagerWidget},
+            {"name": u"Cooperatives", "icon": 'scoop', "admin":
+             False, "shortcut": "Ctrl+C", "goto": CooperativeSocietyViewWidget},
         ]
 
         # Menu aller à
@@ -43,13 +53,13 @@ class MenuBar(FMenuBar, FWidget):
             goto_.addSeparator()
             goto_.addAction(el_menu)
 
-        # if admin:
-        # all report
-        #     all_report = QAction(u"Tous les rapports", self)
-        #     all_report.setShortcut("Ctrl+T")
-        #     self.connect(all_report, pyqtSignal("triggered()"),
-        #                                         self.all_report)
-        #     goto_.addAction(all_report)
+        settings = QAction(u"Serveur", self)
+        settings.setShortcut("Ctrl+S")
+        self.connect(settings, SIGNAL("triggered()"),
+                     self.goto_settings)
+
+        settings_m = self.addMenu(u"Configurations")
+        settings_m.addAction(settings)
 
         # Menu Aide
         help_ = self.addMenu(u"Aide")
@@ -60,6 +70,10 @@ class MenuBar(FMenuBar, FWidget):
 
     def goto(self, goto):
         self.change_main_context(goto)
+
+    def goto_settings(self):
+        from ui.settingsView import SettingsDialog
+        self.change_main_context(SettingsDialog)
 
     # Aide
     def goto_help(self):
