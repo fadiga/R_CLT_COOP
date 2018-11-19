@@ -14,7 +14,7 @@ from Common.ui.common import (
 from Common.ui.table import FTableWidget
 # from Common.ui.util import (date_to_datetime, date_on_or_end)
 
-from models import Demande
+from models import Demande, CooperativeCompanie
 
 
 class ResgistrationManagerWidget(FWidget, FPeriodHolder):
@@ -41,7 +41,6 @@ class ResgistrationManagerWidget(FWidget, FPeriodHolder):
         self.new_demande_btt.setIcon(QIcon.fromTheme('save', QIcon(
             u"{}add.png".format(Config.img_media))))
         self.new_demande_btt.clicked.connect(self.goto_demande)
-
         self.table = DemandeTableWidget(parent=self)
 
         editbox = QGridLayout()
@@ -60,12 +59,6 @@ class ResgistrationManagerWidget(FWidget, FPeriodHolder):
         self.change_main_context(RegistrationViewWidget)
 
     def finder(self):
-        # self.compte_name = self.compte_field.lineEdit().text()
-
-        # self.title_field.setText(self.compte_name)
-        # if self.compte_name != "":
-        #     self.compte = ProviderOrClient.get(name=self.compte_name)
-
         self.table.refresh_()
 
 
@@ -89,37 +82,36 @@ class DemandeTableWidget(FTableWidget):
         self.hideColumn(len(self.hheaders) - 1)
 
     def set_data_for(self):
-        qs = Demande.select()
-        # if not isinstance(self.parent.compte, str):
-        #     qs = qs.where(Demande.provider_clt == self.parent.compte)
-        # else:
-        #     self.parent.compte = "Tous"
-        # qs = qs.select().where(
-        #     Demande.status == False, Demande.date <= date_on_or_end(
-        #         self.end_date, on=False), DemandeTableWidgetde.date >= date_on_or_end(
-        #         self.on_date)).order_by(Demande.date.asc())
+        qs = Demande.select().filter(Demande.status != Demande.ENDPROCCES)
+        if not self.parent.search_field.text() == "":
+            coopc = CooperativeCompanie.select().where(
+                CooperativeCompanie.denomination.contains(self.parent.search_field.text()))
+            qs = qs.select().filter(Demande.scoop == coopc).order_by(
+                Demande.declaration_date.asc())
         self.data = [(dmd.scoop.denomination, dmd.declaration_date,
                       dmd.scoop.display_forme(), dmd.status, dmd.scoop.id) for dmd in qs]
 
     def _item_for_data(self, row, column, data, context=None):
-        if column == 3:
+        if column == len(self.data[0]) - 2:
             return QTableWidgetItem(QIcon(
                 u"{}go-next.png".format(Config.img_cmedia)),
-                Demande.STATUS.get(int(self.data[row][-2]) + 1))
-        return super(DemandeTableWidget, self)._item_for_data(row, column,
-                                                              data, context)
+                Demande.STATUS.get(int(self.data[row][-2])))
+        return super(DemandeTableWidget, self)._item_for_data(
+            row, column, data, context)
 
     def click_item(self, row, column, *args):
         self.choix = Demande.filter(id=self.data[row][-1]).get()
-        # status = self.data[row][-2]
         if column == 3:
-            print(type(self.choix.status))
             status = int(self.choix.status)
-            if status == self.choix.declaration:
+            if status == self.choix.ADDMEMBER:
                 from ui.member_manager import MemberManagerWidget
                 self.parent.change_main_context(
                     MemberManagerWidget, dmd=self.choix)
-            if status == self.choix.add_member:
+            if status == self.choix.CHECKLIST:
                 from ui.check_list_view import CheckListViewWidget
                 self.parent.change_main_context(
                     CheckListViewWidget, dmd=self.choix)
+            if status == self.choix.IMMATRICULAITON:
+                from ui.immatriculation import ImmatriculationSCoopViewWidget
+                self.parent.change_main_context(
+                    ImmatriculationSCoopViewWidget, dmd=self.choix)

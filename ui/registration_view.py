@@ -11,7 +11,7 @@ from PyQt4.QtGui import (
 from Common.ui.common import (ExtendedComboBox, FWidget, FormatDate, LineEdit,
                               Button_save, FLabel, FRLabel, IntLineEdit)
 from Common.ui.util import device_amount, check_is_empty, is_int
-from models import (Demande, CooperativeCompanie, VFQ,
+from models import (Demande, CooperativeCompanie, VFQ, Settings,
                     CheckList, Activity, Spinneret, Commune)
 from ui.registration_manager import ResgistrationManagerWidget
 
@@ -32,7 +32,6 @@ class RegistrationViewWidget(FWidget):
         self.duree_statutaire_field = IntLineEdit()
         self.vfq_field = LineEdit()
         self.commune_field = LineEdit()
-        self.quartier_field = LineEdit()
         self.rue_field = IntLineEdit()
         self.porte_field = IntLineEdit()
         self.tel_field = IntLineEdit()
@@ -170,8 +169,8 @@ class RegistrationViewWidget(FWidget):
     def change_select(self):
         self.act_select = self.activities_list[
             self.activites_box.currentIndex()]
-        self.spinneret_list = Spinneret.select().where(
-            Spinneret.activity == self.act_select)
+        self.spinneret_list = [sp for sp in Spinneret.select().where(
+            Spinneret.activity == self.act_select)]
         if self.spinneret_list == []:
             self.spinneret_box.clear()
         for index in range(0, len(self.spinneret_list)):
@@ -246,6 +245,7 @@ class RegistrationViewWidget(FWidget):
         self.dmd.check_list = check_list
         self.dmd.declaration_date = str(self.declaration_date_field.text())
         self.dmd.scoop = self.scoop
+        self.dmd.status = self.dmd.ADDMEMBER
         self.dmd.save()
         return True
 
