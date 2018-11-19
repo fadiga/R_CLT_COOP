@@ -35,7 +35,7 @@ class MemberManagerWidget(FWidget, FPeriodHolder):
 
         self.string_list = []
         self.title_field = FPageTitle(
-            "Gestion des membres du {}".format(self.dmd.scoop))
+            "Gestion des membres de la {}".format(self.dmd.scoop))
 
         self.end_demande_btt = Button("Fin de l'ajout")
         self.end_demande_btt.setMaximumWidth(400)
@@ -61,8 +61,10 @@ class MemberManagerWidget(FWidget, FPeriodHolder):
         self.setLayout(vbox)
 
     def end_add_member(self):
-        self.dmd.status = self.dmd.add_member
+        self.dmd.status = self.dmd.CHECKLIST
         self.dmd.save()
+        from ui.check_list_view import CheckListViewWidget
+        self.change_main_context(CheckListViewWidget, dmd=self.dmd)
 
     def add_member(self):
         self.open_dialog(
