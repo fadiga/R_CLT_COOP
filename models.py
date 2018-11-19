@@ -17,6 +17,15 @@ FDATE = u"%c"
 NOW = datetime.now()
 
 
+class Settings(BaseModel):
+
+    slug = CharField(verbose_name=("Code cercle"))
+    url = CharField(verbose_name=("URL serveur"))
+
+    def __str__(self):
+        return self.name
+
+
 class Cercle(BaseModel):
     name = CharField(verbose_name=("Nom"))
     slug = CharField(unique=True, verbose_name=("Nom"))
@@ -82,8 +91,8 @@ class CheckList(BaseModel):
     nature_domaine_ri = IntegerField(null=True)
     duree_status = IntegerField(null=True)
     duree_ri = IntegerField(null=True)
-    lien_commu_status = IntegerField(null=True)
-    lien_commu_ri = IntegerField(null=True)
+    lien_commun_status = IntegerField(null=True)
+    lien_commun_ri = IntegerField(null=True)
     coord_initiateur_status = IntegerField(null=True)
     coord_initiateur_ri = IntegerField(null=True)
     max_min_admin_cg_status = IntegerField(null=True)
@@ -106,6 +115,8 @@ class CheckList(BaseModel):
     parts_sociales_ri = IntegerField(null=True)
     declatation_status = IntegerField(null=True)
     declatation_ri = IntegerField(null=True)
+    id_apport_numeraire_status = IntegerField(null=True)
+    id_apport_numeraire_ri = IntegerField(null=True)
     id_apport_nature_status = IntegerField(null=True)
     id_apport_nature_ri = IntegerField(null=True)
     evaluation_apport_status = IntegerField(null=True)
@@ -143,31 +154,7 @@ class CheckList(BaseModel):
     last_update_date = DateTimeField(null=True)
 
     def __str__(self):
-        return "{}/{}".format(self.qualite_declarant, self.forme_scoop_status)
-
-
-class Immatriculation(BaseModel):
-
-    identifiant = CharField()
-    sex = CharField()
-    full_name = CharField(verbose_name="Nom complet")
-    position = CharField(verbose_name="Qualité")
-    commune = CharField(null=True)
-    quartier = CharField(null=True)
-    rue = IntegerField(null=True)
-    porte = IntegerField(null=True)
-    bp = IntegerField(null=True)
-    tel = IntegerField(null=True)
-    email = CharField(null=True)
-    # META
-    is_syncro = BooleanField(default=False)
-    last_update_date = DateTimeField(null=True)
-
-    def __str__(self):
-        return "{}{}".format(self.identifiant, self.full_name)
-
-    def create_ident(self):
-        return "2015T2D1/0002B"
+        return "{}/{}".format(self.qualite_declarant_check, self.forme_scoop_status)
 
 
 class CooperativeCompanie(BaseModel):
@@ -186,9 +173,9 @@ class CooperativeCompanie(BaseModel):
     }
 
     duree_statutaire = IntegerField(null=True)
-    vfq = CharField(null=True)
+    cercle = CharField(null=True)
     commune = CharField(null=True)
-    quartier = CharField(null=True)
+    vfq = CharField(null=True)
     rue = IntegerField(null=True)
     porte = IntegerField(null=True)
     bp = IntegerField(null=True)
@@ -203,7 +190,7 @@ class CooperativeCompanie(BaseModel):
     apports_nature = IntegerField(null=True)
     apports_industrie = IntegerField(null=True)
     created = BooleanField(default=False)
-    immatriculation = ForeignKeyField(Immatriculation, null=True)
+    immatricule = CharField(null=True)
 
     # META
     is_syncro = BooleanField(default=False)
@@ -221,20 +208,57 @@ class CooperativeCompanie(BaseModel):
         return self.FORMES.get(self.forme)
 
 
+class Immatriculation(BaseModel):
+    P = "president"
+    MM = "membre_mandate"
+    TR = "avocat"
+    NT = "notaire"
+    TP = "tiers_avec_procuration"
+
+    QUALITIES = {
+        P: "Président",
+        MM: "Membre mandaté",
+        TR: "Avocat",
+        NT: "Notaire",
+        TP: "Tiers avec procuration",
+    }
+    scoop = ForeignKeyField(CooperativeCompanie)
+    name_declarant = CharField(verbose_name="Nom complet")
+    quality = CharField(verbose_name="Qualité")
+    date = DateField(default=NOW)
+    procuration = CharField(verbose_name="Qualité")
+    # META
+    is_syncro = BooleanField(default=False)
+    last_update_date = DateTimeField(null=True)
+
+    def __str__(self):
+        return "{}{}".format(self.identifiant, self.full_name)
+
+    def create_ident(self):
+        return "R-{}-M5d3/00111/B".format(NOW.year)
+
+    def save_ident(self):
+        self.save()
+        self.scoop.immatricule = self.create_ident()
+        self.scoop.created = True
+        self.scoop.end_date = self.date
+        self.scoop.save()
+
+
 class Demande(BaseModel):
 
-    declaration = 1
-    add_member = 2
-    check_list = 3
-    immatriculation = 4
-    end_procces = 5
+    DECLARATION = 1
+    ADDMEMBER = 2
+    CHECKLIST = 3
+    IMMATRICULAITON = 4
+    ENDPROCCES = 5
 
     STATUS = {
-        declaration: "Déclaration",
-        add_member: "Ajout membre",
-        check_list: "Vérification",
-        immatriculation: "Immatriculation",
-        end_procces: "end_procces",
+        DECLARATION: "Déclaration",
+        ADDMEMBER: "Ajout membre",
+        CHECKLIST: "Vérification",
+        IMMATRICULAITON: "Immatriculation",
+        ENDPROCCES: "end_procces",
     }
 
     declaration_date = DateField()
@@ -245,7 +269,7 @@ class Demande(BaseModel):
     is_syncro = BooleanField(default=False)
     last_update_date = DateTimeField(null=True)
     start_date = DateTimeField(default=NOW)
-    status = CharField(default=declaration)
+    status = CharField(default=DECLARATION)
     end_date = DateTimeField(null=True)
 
     def __str__(self):
