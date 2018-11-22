@@ -58,15 +58,18 @@ def pdFview(filename, dmd):
         p = canvas.Canvas(TMP_FILE, pagesize=A4)
         # p.setFont(FONT, DEFAULT_FONT_SIZE)
 
+        p.drawString(x, y, dmd.scoop.region)
+        p.drawString(x, y - 30, dmd.scoop.cercle)
+
         denomination1, denomination2 = controle_caratere(
             dmd.scoop.denomination, 60, 65)
         p.drawString(x, y - 90, denomination1)
         p.drawString(x, y - 120, denomination2)
         p.drawString(x, y - 154, str(dmd.id).rjust(36, ' '))
-        p.drawString(
-            x, y - 154, str(dmd.start_date.strftime("%d / %B / %Y")).rjust(115, ' '))
+        p.drawString(x, y - 154, str(
+            dmd.start_date.strftime("%d / %B / %Y")).rjust(115, ' '))
         p.drawString(x, y - 190, str(immat.name_declarant).rjust(23, ' '))
-        p.drawString(x, y - 224, str(immat.quality).rjust(36, ' '))
+        p.drawString(x, y - 224, str(immat.display_quality()).rjust(36, ' '))
         p.drawString(x, y - 262, str(immat.procuration).rjust(57, ' '))
         p.drawString(x, y - 298, str(dmd.scoop.commune).rjust(40))
         p.drawString(x, y - 298, str(dmd.scoop.vfq).rjust(106, ' '))

@@ -8,9 +8,9 @@ from __future__ import (
 
 from datetime import datetime
 
-from peewee import (DateTimeField, DateField, CharField, TextField,
-                    IntegerField, FloatField, BooleanField, ForeignKeyField)
-
+from peewee import (DateTimeField, DateField, CharField,
+                    IntegerField, BooleanField, ForeignKeyField)
+from data_helper import get_entity_name
 from Common.models import BaseModel
 
 FDATE = u"%c"
@@ -19,51 +19,14 @@ NOW = datetime.now()
 
 class Settings(BaseModel):
 
-    slug = CharField(verbose_name=("Code cercle"))
-    url = CharField(verbose_name=("URL serveur"))
+    slug_region = CharField(verbose_name=("Code region"))
+    slug_cercle = CharField(verbose_name=("Code cercle"))
 
-    def __str__(self):
-        return self.name
+    def region_name(self):
+        return get_entity_name(self.slug_region)
 
-
-class Cercle(BaseModel):
-    name = CharField(verbose_name=("Nom"))
-    slug = CharField(unique=True, verbose_name=("Nom"))
-
-    def __str__(self):
-        return self.name
-
-
-class Commune(BaseModel):
-    name = CharField(verbose_name=("Nom"))
-    slug = CharField(unique=True, verbose_name=("Nom"))
-    parent = ForeignKeyField(Cercle)
-
-    def __str__(self):
-        return self.name
-
-
-class VFQ(BaseModel):
-    name = CharField(verbose_name=("Nom"))
-    slug = CharField(unique=True, verbose_name=("Nom"))
-    parent = ForeignKeyField(Commune)
-
-    def __str__(self):
-        return self.name
-
-
-class Activity(BaseModel):
-    name = CharField(verbose_name=("Nom"))
-    slug = CharField(unique=True, verbose_name=("Nom"))
-
-    def __str__(self):
-        return self.name
-
-
-class Spinneret(BaseModel):
-    name = CharField(verbose_name=("Nom"))
-    slug = CharField(unique=True, verbose_name=("Nom"))
-    activity = ForeignKeyField(Activity)
+    def cercle_name(self):
+        return get_entity_name(self.slug_cercle)
 
     def __str__(self):
         return self.name
@@ -173,6 +136,7 @@ class CooperativeCompanie(BaseModel):
     }
 
     duree_statutaire = IntegerField(null=True)
+    region = CharField(null=True)
     cercle = CharField(null=True)
     commune = CharField(null=True)
     vfq = CharField(null=True)
@@ -185,7 +149,7 @@ class CooperativeCompanie(BaseModel):
     commercial_name = CharField(null=True)
     created_year = IntegerField(null=True)
     forme = CharField()
-    spinneret = ForeignKeyField(Spinneret, null=True)
+    spinneret = CharField(null=True)
     apports_numeraire = IntegerField(null=True)
     apports_nature = IntegerField(null=True)
     apports_industrie = IntegerField(null=True)
@@ -237,6 +201,9 @@ class Immatriculation(BaseModel):
     def create_ident(self):
         return "R-{}-M5d3/00111/B".format(NOW.year)
 
+    def display_quality(self):
+        return self.QUALITIES.get(self.quality)
+
     def save_ident(self):
         self.save()
         self.scoop.immatricule = self.create_ident()
@@ -272,6 +239,9 @@ class Demande(BaseModel):
     status = CharField(default=DECLARATION)
     end_date = DateTimeField(null=True)
 
+    def display_status(self):
+        return self.STATUS.get(self.status)
+
     def __str__(self):
         return self.scoop.denomination
 
@@ -279,14 +249,19 @@ class Demande(BaseModel):
 class CooperativeMember(BaseModel):
     """
     """
-    PR = "pr"
-    SE = "se"
-    MB = "mb"
+    PCG = "president_ca-cg"
+    SEA = "secretaire_administratif"
+    TRS = "tresorier"
+    PCC = "president_con-com"
+    MMB = "membre"
     POSTE = {
-        PR: "President",
-        SE: "Secrétaire",
-        MB: "Membre",
+        PCG: "Président CA-CG",
+        SEA: "Secrétaire Administratif",
+        TRS: "Trésorier",
+        PCC: "Président CON-COM",
+        MMB: "Membre",
     }
+
     M = "M"
     F = "F"
     SEX = {

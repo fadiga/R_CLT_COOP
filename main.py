@@ -34,4 +34,11 @@ def main():
 if __name__ == '__main__':
     if cmain():
         make_migrate()
+
+        from models import Settings
+        if Settings().select().count() == 0:
+            from PyQt4.QtGui import QDialog
+            from ui.settingsView import NewOrEditSettingsViewWidget
+            if not NewOrEditSettingsViewWidget().exec_() == QDialog.Accepted:
+                sys.exit(0)
         main()

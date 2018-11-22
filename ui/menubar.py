@@ -53,14 +53,6 @@ class MenuBar(FMenuBar, FWidget):
             goto_.addSeparator()
             goto_.addAction(el_menu)
 
-        settings = QAction(u"Serveur", self)
-        settings.setShortcut("Ctrl+S")
-        self.connect(settings, SIGNAL("triggered()"),
-                     self.goto_settings)
-
-        settings_m = self.addMenu(u"Configurations")
-        settings_m.addAction(settings)
-
         # Menu Aide
         help_ = self.addMenu(u"Aide")
         help_.addAction(QIcon("{}help.png".format(Config.img_cmedia)),
@@ -72,8 +64,8 @@ class MenuBar(FMenuBar, FWidget):
         self.change_main_context(goto)
 
     def goto_settings(self):
-        from ui.settingsView import SettingsDialog
-        self.change_main_context(SettingsDialog)
+        from ui.settingsView import NewOrEditSettingsViewWidget
+        self.change_main_context(NewOrEditSettingsViewWidget)
 
     # Aide
     def goto_help(self):

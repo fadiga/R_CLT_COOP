@@ -11,8 +11,10 @@ from PyQt4.QtGui import (
 from Common.ui.common import (ExtendedComboBox, FWidget, FormatDate, LineEdit,
                               Button_save, FLabel, FRLabel, IntLineEdit)
 from Common.ui.util import device_amount, check_is_empty, is_int
-from models import (Demande, CooperativeCompanie, VFQ, Settings,
-                    CheckList, Activity, Spinneret, Commune)
+from models import (Demande, CooperativeCompanie, Settings,
+                    CheckList)
+from data_helper import (entity_children, get_formes, get_spinneret_activites,
+                         get_activities)
 from ui.registration_manager import ResgistrationManagerWidget
 
 
@@ -26,7 +28,7 @@ class RegistrationViewWidget(FWidget):
         self.parent = parent
         self.parentWidget().set_window_title("FORMULAIRE D’IMMATRICULATION")
         self.title = FLabel("<h3>FORMULAIRE D’IMMATRICULATION</h3>")
-
+        self.sttg = Settings.select().where(Settings.id == 1).get()
         self.form_list = CooperativeCompanie.FORMES
         self.created_year_field = IntLineEdit()
         self.duree_statutaire_field = IntLineEdit()
@@ -50,44 +52,42 @@ class RegistrationViewWidget(FWidget):
         self.apports_industrie_field.textChanged.connect(self.cal_total)
 
         self.spinneret_box = QComboBox()
-        self.spinneret_box.setMaximumWidth(280)
+        # self.spinneret_box.setMaximumWidth(280)
 
-        self.activities_list = Activity.all()
         self.activites_box = QComboBox()
-        self.activites_box.setMaximumWidth(280)
-        self.activites_box.currentIndexChanged.connect(self.change_select)
-        for index in range(0, len(self.activities_list)):
-            op = self.activities_list[index]
-            self.activites_box.addItem(op.name, op.id)
+        # self.activites_box.setMaximumWidth(280)
+        self.activites_box.currentIndexChanged.connect(self.sp_change_select)
+        self.activities_list = get_activities()
+        for index, value in enumerate(self.activities_list):
+            self.activites_box.addItem(
+                "{}".format(self.activities_list.get(value).upper()), value)
             # if self.store and self.store.name == op.name:
             #     self.box_store.setCurrentIndex(index)
 
         self.formes_box = QComboBox()
         self.formes_box.setMaximumWidth(200)
-        self.formes_list = CooperativeCompanie.FORMES.items()
+        self.formes_list = get_formes()
         for index, value in enumerate(self.formes_list):
             self.formes_box.addItem(
-                "{}".format(value[1].upper()), value[0])
-            # if self.dmd.forme == value[0]:
-            #     self.formes_box.setCurrentIndex(index)
+                "{}".format(self.formes_list.get(value).upper()), value)
+        stt = Settings.select().where(Settings.id == 1).get()
 
-        self.commune_list = [""] + [
-            (entity.name) for entity in Commune.select().order_by(
-                Commune.name.desc())]
+        self.commune_list = entity_children(stt.slug_cercle).items()
         self.commune_box = ExtendedComboBox()
-        self.commune_box.addItems(self.commune_list)
+        for index, value in enumerate(self.commune_list):
+            self.commune_box.addItem(
+                "{}".format(value[1].upper()), value[0])
+        # self.commune_box.addItems(self.commune_list)
         self.commune_box.setToolTip("commune")
-        self.commune_box.currentIndexChanged.connect(
-            self.refresh_entity)
+        self.commune_box.currentIndexChanged.connect(self.c_change_select)
 
-        self.vfq_list = [""] + [
-            (entity.name) for entity in VFQ.select().order_by(
-                VFQ.name.desc())]
+        self.vfq_list = self.get_vfq_list()
         self.vfq_box = ExtendedComboBox()
-        self.vfq_box.addItems(self.vfq_list)
+        self.vfq_list = self.get_vfq_list()
+        for index, value in enumerate(self.vfq_list):
+            self.vfq_box.addItem(
+                "{}".format(self.vfq_list.get(value).upper()), value)
         self.vfq_box.setToolTip("vfq")
-        self.vfq_box.currentIndexChanged.connect(
-            self.refresh_entity)
 
         formbox = QFormLayout()
         formbox.addRow(FLabel(
@@ -123,9 +123,10 @@ class RegistrationViewWidget(FWidget):
         self.vline.setFrameShadow(QFrame.Sunken)
 
         self.addresGroupBox = QGroupBox("7. Adresse du siège social")
+        print(stt.cercle_name())
         addres_gribox = QGridLayout()
         addres_gribox.addWidget(FRLabel("Cercle :"), 0, 0)
-        addres_gribox.addWidget(FLabel("Cercle"), 0, 1)
+        addres_gribox.addWidget(FLabel(stt.cercle_name()), 0, 1)
         addres_gribox.addWidget(FRLabel("Commune :"), 1, 0)
         addres_gribox.addWidget(self.commune_box, 1, 1)
         # addres_gribox.addWidget(self.vline, 0, 3, 2, 5)
@@ -166,18 +167,32 @@ class RegistrationViewWidget(FWidget):
     def refresh_entity(self):
         print("refresh_entity")
 
-    def change_select(self):
-        self.act_select = self.activities_list[
-            self.activites_box.currentIndex()]
-        self.spinneret_list = [sp for sp in Spinneret.select().where(
-            Spinneret.activity == self.act_select)]
-        if self.spinneret_list == []:
-            self.spinneret_box.clear()
-        for index in range(0, len(self.spinneret_list)):
-            op = self.spinneret_list[index]
-            self.spinneret_box.addItem(op.name, op.id)
-            # if self.store and self.store.name == op.name:
-            #     self.box_store.setCurrentIndex(index)
+    def get_vfq_list(self):
+        # c_dic = {}
+        co_select = self.commune_box.itemData(
+            self.commune_box.currentIndex())
+        return entity_children(co_select)
+
+    def c_change_select(self):
+        self.vfq_box.clear()
+        self.vfq_list = self.get_vfq_list()
+        for index, value in enumerate(self.vfq_list):
+            self.vfq_box.addItem(
+                "{}".format(self.vfq_list.get(value).upper()), value)
+
+    def get_spinneret_list(self):
+        # c_dic = {}
+        r_select = self.activites_box.itemData(
+            self.activites_box.currentIndex())
+        return get_spinneret_activites(r_select)
+
+    def sp_change_select(self):
+        self.spinneret_box.clear()
+        self.spinneret_list = self.get_spinneret_list()
+
+        for index, value in enumerate(self.spinneret_list):
+            self.spinneret_box.addItem(
+                "{}".format(self.spinneret_list.get(value).upper()), value)
 
     def is_valide(self):
         if check_is_empty(self.denomination_field):
@@ -229,6 +244,8 @@ class RegistrationViewWidget(FWidget):
         self.scoop.apports_nature = is_int(self.apports_nature_field.text())
         self.scoop.apports_industrie = is_int(
             self.apports_industrie_field.text())
+        self.scoop.region = self.sttg.region
+        self.scoop.cercle = self.sttg.cercle
         self.scoop.commune = self.commune_field.text()
         self.scoop.vfq = self.vfq_field.text()
         self.scoop.rue = is_int(self.rue_field.text())
