@@ -641,4 +641,4 @@ class CheckListViewWidget(FWidget):
         self.dmd.save()
         from ui.immatriculation import ImmatriculationSCoopViewWidget
         self.change_main_context(
-            ImmatriculationSCoopViewWidget, table_p=self, dmd=self.dmd)
+            ImmatriculationSCoopViewWidget, dmd=self.dmd)

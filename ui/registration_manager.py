@@ -4,8 +4,6 @@
 # maintainer: Fad
 
 
-# from datetime import datetime
-
 from PyQt4.QtGui import (QVBoxLayout, QGridLayout, QIcon, QTableWidgetItem)
 
 from configuration import Config
@@ -17,13 +15,12 @@ from Common.ui.table import FTableWidget
 from models import Demande, CooperativeCompanie
 
 
-class ResgistrationManagerWidget(FWidget, FPeriodHolder):
+class ResgistrationManagerWidget(FWidget):
 
     def __init__(self, parent=0, *args, **kwargs):
 
         super(ResgistrationManagerWidget, self).__init__(
             parent=parent, *args, **kwargs)
-        FPeriodHolder.__init__(self, *args, **kwargs)
 
         self.parent = parent
 

@@ -6,8 +6,6 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 
 from models import Immatriculation
-# from Common.cel import cel
-from configuration import Config
 from Common.ui.util import get_temp_filename
 
 
@@ -18,16 +16,14 @@ def pdFview(filename, dmd):
 
     if not filename:
         filename = get_temp_filename('pdf')
-        # print(filename)
-    # on recupere les items de la facture
 
     # Static source pdf to be overlayed
     PDFSOURCE = 'tools/immat_source.pdf'
-    TMP_FILE = 'tmp.pdf'
-    DATE_FORMAT = u"%d/%m/%Y"
+    TMP_FILE = 'tools/tmp.pdf'
+    # DATE_FORMAT = u"%d/%m/%Y"
 
     DEFAULT_FONT_SIZE = 11
-    FONT = 'Courier-Bold'
+    FONT = 'Courier'
     # A simple function to return a leading 0 on any single digit int.
 
     def double_zero(value):
@@ -56,33 +52,32 @@ def pdFview(filename, dmd):
         y = 630
         x = 70
         p = canvas.Canvas(TMP_FILE, pagesize=A4)
-        # p.setFont(FONT, DEFAULT_FONT_SIZE)
+        p.setFont(FONT, DEFAULT_FONT_SIZE)
+        p.drawString(x + 70, y + 73, str(dmd.scoop.display_region()))
+        p.drawString(x + 70, y + 37, str(dmd.scoop.display_cercle()))
 
-        p.drawString(x, y, dmd.scoop.region)
-        p.drawString(x, y - 30, dmd.scoop.cercle)
+        denom1, denom2 = controle_caratere(dmd.scoop.denomination, 60, 65)
+        p.drawString(x, y - 90, denom1)
+        p.drawString(x, y - 120, denom2)
 
-        denomination1, denomination2 = controle_caratere(
-            dmd.scoop.denomination, 60, 65)
-        p.drawString(x, y - 90, denomination1)
-        p.drawString(x, y - 120, denomination2)
-        p.drawString(x, y - 154, str(dmd.id).rjust(36, ' '))
-        p.drawString(x, y - 154, str(
-            dmd.start_date.strftime("%d / %B / %Y")).rjust(115, ' '))
-        p.drawString(x, y - 190, str(immat.name_declarant).rjust(23, ' '))
-        p.drawString(x, y - 224, str(immat.display_quality()).rjust(36, ' '))
-        p.drawString(x, y - 262, str(immat.procuration).rjust(57, ' '))
-        p.drawString(x, y - 298, str(dmd.scoop.commune).rjust(40))
-        p.drawString(x, y - 298, str(dmd.scoop.vfq).rjust(106, ' '))
-        p.drawString(x, y - 334, str(dmd.scoop.rue).rjust(30, ' '))
-        p.drawString(x, y - 334, str(dmd.scoop.porte).rjust(97, ' '))
-        p.drawString(x, y - 369, str(dmd.scoop.tel).rjust(20, ' '))
-        p.drawString(x, y - 369, str(dmd.scoop.bp).rjust(70, ' '))
-        p.drawString(x, y - 369, str(dmd.scoop.email).rjust(110, ' '))
-        p.drawString(x, y - 400, str(dmd.scoop.immatricule).rjust(50, ' '))
+        p.drawString(x + 120, y - 154, str(dmd.id))
+        p.drawString(x + 300, y - 154, str(
+            dmd.start_date.strftime("%d / %B / %Y")))
+        p.drawString(x + 70, y - 190, str(immat.name_declarant))
+        p.drawString(x + 65, y - 224, str(immat.display_quality()))
+        p.drawString(x + 176, y - 262, str(immat.procuration))
+        p.drawString(x + 120, y - 298, str(dmd.scoop.display_commune()))
+        p.drawString(x + 355, y - 298, str(dmd.scoop.display_vfq()))
+        p.drawString(x + 90, y - 334, str(dmd.scoop.rue))
+        p.drawString(x + 317, y - 334, str(dmd.scoop.porte))
+        p.drawString(x + 67, y - 369, str(dmd.scoop.tel))
+        p.drawString(x + 227, y - 369, str(dmd.scoop.bp))
+        p.drawString(x + 350, y - 369, str(dmd.scoop.email))
+        p.drawString(x + 100, y - 400, str(dmd.scoop.immatricule))
         p.drawString(
-            x, y - 470, str(dmd.scoop.cercle).rjust(10, ' '))
+            x + 60, y - 470, str(dmd.scoop.display_cercle()))
         p.drawString(
-            x, y - 470, str(immat.date.strftime("%d/%m/%Y")).rjust(113, ' '))
+            x + 370, y - 470, str(immat.date.strftime("%d/%m/%Y")))
         p.showPage()
         # Sauvegarde de la page
         p.save()

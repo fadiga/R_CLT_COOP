@@ -29,11 +29,8 @@ class RegistrationViewWidget(FWidget):
         self.parentWidget().set_window_title("FORMULAIRE D’IMMATRICULATION")
         self.title = FLabel("<h3>FORMULAIRE D’IMMATRICULATION</h3>")
         self.sttg = Settings.select().where(Settings.id == 1).get()
-        self.form_list = CooperativeCompanie.FORMES
         self.created_year_field = IntLineEdit()
         self.duree_statutaire_field = IntLineEdit()
-        self.vfq_field = LineEdit()
-        self.commune_field = LineEdit()
         self.rue_field = IntLineEdit()
         self.porte_field = IntLineEdit()
         self.tel_field = IntLineEdit()
@@ -123,7 +120,6 @@ class RegistrationViewWidget(FWidget):
         self.vline.setFrameShadow(QFrame.Sunken)
 
         self.addresGroupBox = QGroupBox("7. Adresse du siège social")
-        print(stt.cercle_name())
         addres_gribox = QGridLayout()
         addres_gribox.addWidget(FRLabel("Cercle :"), 0, 0)
         addres_gribox.addWidget(FLabel(stt.cercle_name()), 0, 1)
@@ -163,9 +159,6 @@ class RegistrationViewWidget(FWidget):
         vbox.addWidget(self.addresGroupBox)
         vbox.addLayout(duree_fbox)
         self.setLayout(vbox)
-
-    def refresh_entity(self):
-        print("refresh_entity")
 
     def get_vfq_list(self):
         # c_dic = {}
@@ -211,10 +204,6 @@ class RegistrationViewWidget(FWidget):
             return False
         if check_is_empty(self.apports_industrie_field):
             return False
-        if check_is_empty(self.vfq_field):
-            return False
-        if check_is_empty(self.commune_field):
-            return False
         if check_is_empty(self.rue_field):
             return False
         if check_is_empty(self.porte_field):
@@ -227,16 +216,19 @@ class RegistrationViewWidget(FWidget):
             return False
         if check_is_empty(self.duree_statutaire_field):
             return False
+        return True
 
     def save(self):
-        if self.is_valide():
-            return False
+        if not self.is_valide():
+            return
         self.scoop = CooperativeCompanie()
         self.scoop.created_year = is_int(self.created_year_field.text())
         self.scoop.denomination = self.denomination_field.text()
         self.scoop.commercial_name = self.commercial_name_field.text()
-        self.scoop.spinneret = self.spinneret_list[
-            self.spinneret_box.currentIndex()]
+        self.scoop.activity = self.activites_box.itemData(
+            self.activites_box.currentIndex())
+        self.scoop.spinneret = self.spinneret_box.itemData(
+            self.spinneret_box.currentIndex())
         self.scoop.forme = self.formes_box.itemData(
             self.formes_box.currentIndex())
         self.scoop.apports_numeraire = is_int(
@@ -244,10 +236,11 @@ class RegistrationViewWidget(FWidget):
         self.scoop.apports_nature = is_int(self.apports_nature_field.text())
         self.scoop.apports_industrie = is_int(
             self.apports_industrie_field.text())
-        self.scoop.region = self.sttg.region
-        self.scoop.cercle = self.sttg.cercle
-        self.scoop.commune = self.commune_field.text()
-        self.scoop.vfq = self.vfq_field.text()
+        self.scoop.region = self.sttg.slug_region
+        self.scoop.cercle = self.sttg.slug_cercle
+        self.scoop.commune = self.commune_box.itemData(
+            self.commune_box.currentIndex())
+        self.scoop.vfq = self.vfq_box.itemData(self.vfq_box.currentIndex())
         self.scoop.rue = is_int(self.rue_field.text())
         self.scoop.porte = is_int(self.porte_field.text())
         self.scoop.tel = is_int(self.tel_field.text())

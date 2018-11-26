@@ -6,10 +6,8 @@ def make_migrate():
     from playhouse.migrate import migrate, CharField, FloatField, IntegerField
 
     migrations = []
-
-    for x, y, z in migrations:
+    for elt in migrations:
         try:
-            migrate(migrator.add_column(x, y, z))
-            print(x, " : ", y)
+            migrate(elt)
         except Exception as e:
             print(e)

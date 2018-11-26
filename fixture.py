@@ -10,7 +10,6 @@ import sys
 sys.path.append(os.path.abspath('../'))
 
 from Common.fixture import AdminFixture
-from models import Activity, Spinneret
 
 
 class FixtInit(AdminFixture):

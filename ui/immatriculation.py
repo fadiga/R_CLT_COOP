@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 # maintainer: Fad
 
+from __future__ import (unicode_literals, absolute_import, division,
+                        print_function)
 import datetime
 
 # from PyQt4.QtCore import QDate
@@ -10,7 +12,7 @@ from PyQt4.QtGui import (QVBoxLayout, QGridLayout, QLineEdit, QComboBox)
 from Common.ui.util import check_is_empty
 from Common.ui.common import (FHeader, FWidget, Button_save)
 from models import Immatriculation
-
+from data_helper import get_qualities
 from ui.registration_manager import ResgistrationManagerWidget
 
 today = datetime.date.today()
@@ -22,25 +24,24 @@ class ImmatriculationSCoopViewWidget(FWidget):
         super(ImmatriculationSCoopViewWidget, self).__init__(
             parent=parent, *args, **kwargs)
 
+        self.parent = parent
         self.parentWidget().set_window_title("FORMULAIRE D’IMMATRICULATION")
         self.dmd = dmd
         self.scoop = self.dmd.scoop
         self.name_declarant_field = QLineEdit()
         self.name_declarant_field.setPlaceholderText("M. / Mme")
         self.name_declarant_field.setMaximumWidth(600)
+
+        self.procuration_field = QLineEdit()
         self.quality_box = QComboBox()
         self.quality_box.setMaximumWidth(600)
-        self.qualities_list = Immatriculation.QUALITIES.items()
+        self.quality_box.currentIndexChanged.connect(self.change_select)
+        self.qualities_list = get_qualities()
         for index, value in enumerate(self.qualities_list):
             self.quality_box.addItem(
-                "{}".format(value[1].upper()), value[0])
-            # if self.dmd.forme == value[0]:
-            #     self.quality_box.setCurrentIndex(index)
+                "{}".format(self.qualities_list.get(value).upper()), value)
 
-        self.quality_box.currentIndexChanged.connect(self.change_select)
-        self.procuration_field = QLineEdit()
         self.procuration_field.setMaximumWidth(600)
-
         self.procuration_field.setPlaceholderText(
             "Réf.de la Procuration le cas échéant")
         self.btn = Button_save("Sauvegarder")
@@ -115,4 +116,4 @@ class ImmatriculationSCoopViewWidget(FWidget):
         self.dmd.status = self.dmd.ENDPROCCES
         self.dmd.save()
 
-        self.change_context(ResgistrationManagerWidget)
+        self.parent.change_context(ResgistrationManagerWidget)

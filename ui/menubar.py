@@ -5,12 +5,7 @@
 from __future__ import (unicode_literals, absolute_import, division,
                         print_function)
 
-
-# from PyQt5.QtWidgets import QAction
-# from PyQt5.QtGui import (QIcon, QPixmap)
-# from PyQt5.QtCore import pyqtSignal
-
-from PyQt4.QtGui import (QMessageBox, QIcon, QAction, QPixmap)
+from PyQt4.QtGui import (QIcon, QAction, QPixmap)
 from PyQt4.QtCore import SIGNAL
 
 from configuration import Config

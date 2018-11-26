@@ -15,10 +15,10 @@ from PyQt4.QtGui import QApplication
 
 from Common.ui.window import FWindow
 from Common.cmain import cmain
+from Common.ui.qss import theme
 
 from migrations import make_migrate
 from ui.mainwindow import MainWindow
-from Common.ui.qss import theme
 
 app = QApplication(sys.argv)
 
@@ -34,7 +34,6 @@ def main():
 if __name__ == '__main__':
     if cmain():
         make_migrate()
-
         from models import Settings
         if Settings().select().count() == 0:
             from PyQt4.QtGui import QDialog

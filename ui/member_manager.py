@@ -86,8 +86,8 @@ class MemberTableWidget(FTableWidget):
         self.stretch_columns = [0, 1, 2, 3, 4]
         self.align_map = {0: 'l', 1: 'l', 2: 'r', 3: 'r', 4: 'r'}
         self.display_vheaders = False
-        self.hheaders = ["Nom complet", "sexe",
-                         "Date naissance", "Téléphone", "poste", "", ""]
+        self.hheaders = [
+            "Nom complet", "sexe", "Date naissance", "Téléphone", "poste", "", ""]
         self.refresh_()
 
     def refresh_(self):

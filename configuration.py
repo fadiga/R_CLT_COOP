@@ -29,7 +29,7 @@ class Config(CConstants):
 
     # -------- Application -----------#
     NAME_MAIN = "main.py"
-    APP_NAME = "Rep_coop"
+    APP_NAME = "Rep-desktop"
     APP_VERSION = 1
     APP_DATE = u"10/2018"
     img_media = os.path.join(os.path.join(ROOT_DIR, "static"), "img/")

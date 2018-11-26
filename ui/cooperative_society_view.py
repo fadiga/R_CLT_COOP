@@ -93,9 +93,9 @@ class MemberTableWidget(FTableWidget):
         qs = qs.select().where(
             CooperativeCompanie.denomination.contains(self.parent.search_field.text())).order_by(
             CooperativeCompanie.start_date.asc())
-        self.data = [(
-            mmb.immatricule, mmb.denomination, mmb.commercial_name,
-            mmb.spinneret.activity.name, mmb.spinneret.name, mmb.forme, mmb.id) for mmb in qs]
+        self.data = [(coopc.immatricule, coopc.denomination, coopc.commercial_name,
+                      coopc.display_activity(), coopc.display_spinneret(),
+                      coopc.forme, coopc.id) for coopc in qs]
 
     def _item_for_data(self, row, column, data, context=None):
         if column == 0:

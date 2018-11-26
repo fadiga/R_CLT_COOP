@@ -7,13 +7,13 @@ from PyQt4.QtCore import QDate
 from PyQt4.QtGui import (QVBoxLayout, QDialog, QDateEdit,
                          QFormLayout, QComboBox)
 
+import peewee
 from Common.ui.util import check_is_empty, field_error
 from Common.ui.common import (
     FWidget, Button, FormLabel, LineEdit, IntLineEdit, FormatDate)
-import peewee
-from models import CooperativeMember
 
-# from configuration import Config
+from data_helper import get_postes
+from models import CooperativeMember
 
 
 class EditOrAddMemberDialog(QDialog, FWidget):
@@ -74,12 +74,13 @@ class EditOrAddMemberDialog(QDialog, FWidget):
         self.nationality_field = LineEdit(nationality)
         self.phone_field = IntLineEdit(phone)
         # self.phone_field.setInputMask("D9.99.99.99")
-        self.poste_list = CooperativeMember.POSTE.items()
+        self.poste_list = get_postes()
         self.poste_box = QComboBox()
         for index, value in enumerate(self.poste_list):
             self.poste_box.addItem(
-                "{}".format(value[1].upper()), value[0])
-            if self.member.poste == value[0]:
+                "{}".format(self.poste_list.get(value).upper()), value)
+            if self.member.poste == value:
+                print(value)
                 self.poste_box.setCurrentIndex(index)
 
         formbox = QFormLayout()
@@ -116,20 +117,13 @@ class EditOrAddMemberDialog(QDialog, FWidget):
         # field_error
         if check_is_empty(self.full_name_field):
             return
-        # if check_is_empty(self.addres_field):
-        #     return
-        # if check_is_empty(self.nationality_field):
-        #     return
-
-        member = self.member
-
         try:
-            member.save()
+            self.member.save()
             self.close()
             self.table_p.refresh_()
             self.parent.Notify(
                 u"Le membre {} ({}) a été mise à jour".format(
-                    member.full_name, member.poste), "success")
+                    self.member.full_name, self.member.poste), "success")
         except peewee.IntegrityError:
             field_error(
                 self.full_name_field, "Ce nom existe dans la basse de donnée.")

@@ -10,7 +10,8 @@ from datetime import datetime
 
 from peewee import (DateTimeField, DateField, CharField,
                     IntegerField, BooleanField, ForeignKeyField)
-from data_helper import get_entity_name
+from data_helper import (get_entity_name, get_postes, get_formes, get_qualities,
+                         get_activities, get_spinneret_activites)
 from Common.models import BaseModel
 
 FDATE = u"%c"
@@ -29,7 +30,7 @@ class Settings(BaseModel):
         return get_entity_name(self.slug_cercle)
 
     def __str__(self):
-        return self.name
+        return "{} > {}".format(self.region_name(), self.cercle_name())
 
 
 class CheckList(BaseModel):
@@ -122,19 +123,6 @@ class CheckList(BaseModel):
 
 class CooperativeCompanie(BaseModel):
 
-    SCOOPS = "a"
-    COOP_CA = "b"
-    UNION = "bv"
-    FEDERATION = "bf"
-    CONFEDERATION = "bc"
-    FORMES = {
-        SCOOPS: "SCOOPS",
-        COOP_CA: "COOP CA",
-        UNION: "UNION",
-        FEDERATION: "Fédération",
-        CONFEDERATION: "Confédération",
-    }
-
     duree_statutaire = IntegerField(null=True)
     region = CharField(null=True)
     cercle = CharField(null=True)
@@ -149,6 +137,7 @@ class CooperativeCompanie(BaseModel):
     commercial_name = CharField(null=True)
     created_year = IntegerField(null=True)
     forme = CharField()
+    activity = CharField(null=True)
     spinneret = CharField(null=True)
     apports_numeraire = IntegerField(null=True)
     apports_nature = IntegerField(null=True)
@@ -169,23 +158,31 @@ class CooperativeCompanie(BaseModel):
         return CooperativeMember.select().where(CooperativeMember.scoop == self)
 
     def display_forme(self):
-        return self.FORMES.get(self.forme)
+        return get_formes().get(self.forme)
+
+    def display_activity(self):
+        return get_activities().get(self.activity)
+
+    def display_spinneret(self):
+        return get_spinneret_activites(self.activity).get(self.spinneret)
+
+    def display_region(self):
+        return get_entity_name(self.region)
+
+    def display_cercle(self):
+        return get_entity_name(self.cercle)
+
+    def display_commune(self):
+        return get_entity_name(self.commune)
+
+    def display_vfq(self):
+        return get_entity_name(self.vfq)
 
 
 class Immatriculation(BaseModel):
-    P = "president"
-    MM = "membre_mandate"
-    TR = "avocat"
-    NT = "notaire"
+
     TP = "tiers_avec_procuration"
 
-    QUALITIES = {
-        P: "Président",
-        MM: "Membre mandaté",
-        TR: "Avocat",
-        NT: "Notaire",
-        TP: "Tiers avec procuration",
-    }
     scoop = ForeignKeyField(CooperativeCompanie)
     name_declarant = CharField(verbose_name="Nom complet")
     quality = CharField(verbose_name="Qualité")
@@ -199,10 +196,10 @@ class Immatriculation(BaseModel):
         return "{}{}".format(self.identifiant, self.full_name)
 
     def create_ident(self):
-        return "R-{}-M5d3/00111/B".format(NOW.year)
+        return "R-{}-M5d3/00111/{}".format(NOW.year, "B")
 
     def display_quality(self):
-        return self.QUALITIES.get(self.quality)
+        return get_qualities().get(self.quality)
 
     def save_ident(self):
         self.save()
@@ -249,18 +246,6 @@ class Demande(BaseModel):
 class CooperativeMember(BaseModel):
     """
     """
-    PCG = "president_ca-cg"
-    SEA = "secretaire_administratif"
-    TRS = "tresorier"
-    PCC = "president_con-com"
-    MMB = "membre"
-    POSTE = {
-        PCG: "Président CA-CG",
-        SEA: "Secrétaire Administratif",
-        TRS: "Trésorier",
-        PCC: "Président CON-COM",
-        MMB: "Membre",
-    }
 
     M = "M"
     F = "F"
@@ -283,7 +268,7 @@ class CooperativeMember(BaseModel):
         return self.full_name
 
     def display_poste(self):
-        return self.POSTE.get(self.poste)
+        return get_postes().get(self.poste)
 
     def display_sex(self):
         return self.SEX.get(self.sex)

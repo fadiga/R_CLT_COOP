@@ -58,6 +58,7 @@ Section "install"
   ; File ressources\*.dll
   File /r ${IMAGES}
   File /r ${CIMAGES_PATH}
+  File "rep_fixtures.json"
 
 ;create desktop shortcut
   CreateShortCut "$DESKTOP\${MUI_PRODUCT}.lnk" "$INSTDIR\${MUI_FILE}.exe" parameters "$INSTDIR\${MEDIA}\${IMAGES}\${MUI_ICON}"
