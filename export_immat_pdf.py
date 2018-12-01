@@ -9,7 +9,7 @@ from models import Immatriculation
 from Common.ui.util import get_temp_filename
 
 
-def pdFview(filename, dmd):
+def pdf_maker(filename, dmd):
     """
         cette views est cree pour la generation du PDF
     """
@@ -18,12 +18,12 @@ def pdFview(filename, dmd):
         filename = get_temp_filename('pdf')
 
     # Static source pdf to be overlayed
-    PDFSOURCE = 'tools/immat_source.pdf'
-    TMP_FILE = 'tools/tmp.pdf'
+    pd_source = 'immat_source.pdf'
+    tmp_file = 'tmp.pdf'
     # DATE_FORMAT = u"%d/%m/%Y"
 
-    DEFAULT_FONT_SIZE = 11
-    FONT = 'Courier'
+    default_font_size = 11
+    font = 'Courier'
     # A simple function to return a leading 0 on any single digit int.
 
     def double_zero(value):
@@ -38,7 +38,7 @@ def pdFview(filename, dmd):
     from PyPDF2 import PdfFileWriter, PdfFileReader
 
     # PDF en entrée
-    input1 = PdfFileReader(file(PDFSOURCE, "rb"))
+    input1 = PdfFileReader(file(pd_source, "rb"))
 
     # PDF en sortie
     output = PdfFileWriter()
@@ -51,8 +51,8 @@ def pdFview(filename, dmd):
         page = input1.getPage(i)
         y = 630
         x = 70
-        p = canvas.Canvas(TMP_FILE, pagesize=A4)
-        p.setFont(FONT, DEFAULT_FONT_SIZE)
+        p = canvas.Canvas(tmp_file, pagesize=A4)
+        p.setFont(font, default_font_size)
         p.drawString(x + 70, y + 73, str(dmd.scoop.display_region()))
         p.drawString(x + 70, y + 37, str(dmd.scoop.display_cercle()))
 
@@ -82,7 +82,7 @@ def pdFview(filename, dmd):
         # Sauvegarde de la page
         p.save()
         # Création du watermark
-        watermark = PdfFileReader(file(TMP_FILE, "rb"))
+        watermark = PdfFileReader(file(tmp_file, "rb"))
         # Création page_initiale+watermark
         page.mergePage(watermark.getPage(0))
         # Création de la nouvelle page

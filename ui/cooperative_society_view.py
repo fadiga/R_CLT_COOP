@@ -11,10 +11,9 @@ from PyQt4.QtGui import (QVBoxLayout, QIcon, QTableWidgetItem, QGridLayout)
 # from Common.tabpane import tabbox
 from Common.ui.common import FWidget, FPageTitle, BttExportXLSX, LineEdit
 from Common.ui.table import FTableWidget
-from tools.export_immat_pdf import pdFview
 from Common.ui.util import (uopen_file)
-from ui.cooperative_socuety_show import CooperativeSocietyDialog
 from models import CooperativeCompanie, Demande
+
 from configuration import Config
 
 
@@ -61,10 +60,6 @@ class CooperativeSocietyViewWidget(FWidget):
         self.search = self.search_field.text()
         self.table.refresh_()
 
-    def printer_pdf(self):
-        pdFreport = pdFview("Immatricule", self.dmd)
-        uopen_file(pdFreport)
-
 
 class MemberTableWidget(FTableWidget):
 
@@ -110,10 +105,13 @@ class MemberTableWidget(FTableWidget):
     def click_item(self, row, column, *args):
         self.choix = CooperativeCompanie.filter(id=self.data[row][-1]).get()
         if column == 0:
-            pdFreport = pdFview(
+
+            from export_immat_pdf import pdf_maker
+            pdf_file = pdf_maker(
                 "Immatricule", Demande.filter(scoop=self.choix).get())
-            uopen_file(pdFreport)
+            uopen_file(pdf_file)
         if column == len(self.data[0]) - 1:
+            from ui.cooperative_socuety_show import CooperativeSocietyDialog
             self.parent.open_dialog(
                 CooperativeSocietyDialog, modal=True, scoop=self.choix)
 

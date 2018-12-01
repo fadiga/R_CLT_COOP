@@ -11,6 +11,7 @@
   !define IMAGES "img"
   !define CIMAGES "cimages"
   !define MEDIA "static"
+  !define SOURCE "immat_source.pdf"
   !define CIMAGES_PATH "C:\Users\fadiga\Documents\GitHub\Common\${CIMAGES}"
   ;CRCCheck On
 
@@ -29,19 +30,13 @@
   !define MUI_UNICON "logo.ico"
   !define MUI_SPECIALBITMAP "Bitmap.bmp"
 
-
 ;--------------------------------
 ;Folder selection page
 
   InstallDir "C:\${MUI_PRODUCT}"
-
-
 ;--------------------------------
 ;Data
-
     ;LicenseData "README.txt"
-
-
 ;--------------------------------
 ;Installer Sections
 ;Section "install" Installation info
@@ -53,12 +48,12 @@ Section "install"
   ;File "${MUI_FILE}.exe"
   ;File "README.txt"
 
-  ; List of files/folders to copy
+  ;List of files/folders to copy
   File /r dist\*.*
-  ; File ressources\*.dll
   File /r ${IMAGES}
   File /r ${CIMAGES_PATH}
   File "rep_fixtures.json"
+  File ${SOURCE}
 
 ;create desktop shortcut
   CreateShortCut "$DESKTOP\${MUI_PRODUCT}.lnk" "$INSTDIR\${MUI_FILE}.exe" parameters "$INSTDIR\${MEDIA}\${IMAGES}\${MUI_ICON}"

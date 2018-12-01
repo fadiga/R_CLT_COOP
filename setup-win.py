@@ -85,7 +85,7 @@ manifest_template = '''<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 
 main_app = Target(
     # We can extend or override the VersionInfo of the base class:
-    # version = "1.0",
+    # version=1,
     # file_description = "File Description",
     # comments = "Some Comments",
     # internal_name = "spam",
@@ -106,9 +106,7 @@ main_app = Target(
 
 
 py2exe_options = dict(
-    # packages=['reportlab'],
-    ##    ignores = "dotblas gnosis.xml.pickle.parsers._cexpat mx.DateTime".split(),
-    # dll_excludes = "MSVCP90.dll mswsock.dll powrprof.dll".split(),
+    packages=['reportlab', 'reportlab.pdfgen', ],
     includes=['sip', 'PyQt4'],
     excludes=['tkinter', 'toFspecials'],
     optimize=2,
@@ -117,17 +115,14 @@ py2exe_options = dict(
     dist_dir='dist',
 )
 
-
 # Some options can be overridden by command line options...
 
 setup(name="name",
       # console based executables
       console=[main_app],
-
       # windows subsystem executables (no console)
       windows=[{'script': Config.NAME_MAIN, \
                 'icon_resources': [(0, Config.APP_LOGO_ICO)]}],
-
       # py2exe options
       zipfile=None,
       options={"py2exe": py2exe_options, },

@@ -5,9 +5,7 @@
 from __future__ import (unicode_literals, absolute_import, division,
                         print_function)
 import os
-# from static import Constants
 from Common.cstatic import CConstants
-# from models import Spinneret, Activity, CooperativeCompanies
 
 ROOT_DIR = os.path.dirname(os.path.abspath('__file__'))
 
@@ -29,7 +27,7 @@ class Config(CConstants):
 
     # -------- Application -----------#
     NAME_MAIN = "main.py"
-    APP_NAME = "Rep-desktop"
+    APP_NAME = "R_coop_desktop"
     APP_VERSION = 1
     APP_DATE = u"10/2018"
     img_media = os.path.join(os.path.join(ROOT_DIR, "static"), "img/")

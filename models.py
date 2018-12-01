@@ -157,6 +157,9 @@ class CooperativeCompanie(BaseModel):
     def membres(self):
         return CooperativeMember.select().where(CooperativeMember.scoop == self)
 
+    def demande(self):
+        return Demande.select().where(Demande.scoop == self).get()
+
     def display_forme(self):
         return get_formes().get(self.forme)
 
