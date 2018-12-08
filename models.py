@@ -123,7 +123,6 @@ class CheckList(BaseModel):
 
 class CooperativeCompanie(BaseModel):
 
-    duree_statutaire = IntegerField(null=True)
     region = CharField(null=True)
     cercle = CharField(null=True)
     commune = CharField(null=True)
@@ -144,6 +143,7 @@ class CooperativeCompanie(BaseModel):
     apports_industrie = IntegerField(null=True)
     created = BooleanField(default=False)
     immatricule = CharField(null=True)
+    duree_statutaire = IntegerField(null=True)
 
     # META
     is_syncro = BooleanField(default=False)

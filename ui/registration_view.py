@@ -49,10 +49,10 @@ class RegistrationViewWidget(FWidget):
         self.apports_industrie_field.textChanged.connect(self.cal_total)
 
         self.spinneret_box = QComboBox()
-        # self.spinneret_box.setMaximumWidth(280)
+        self.spinneret_box.setMaximumWidth(280)
 
         self.activites_box = QComboBox()
-        # self.activites_box.setMaximumWidth(280)
+        self.activites_box.setMaximumWidth(280)
         self.activites_box.currentIndexChanged.connect(self.sp_change_select)
         self.activities_list = get_activities()
         for index, value in enumerate(self.activities_list):
@@ -204,16 +204,16 @@ class RegistrationViewWidget(FWidget):
             return False
         if check_is_empty(self.apports_industrie_field):
             return False
-        if check_is_empty(self.rue_field):
-            return False
-        if check_is_empty(self.porte_field):
-            return False
-        if check_is_empty(self.tel_field):
-            return False
-        if check_is_empty(self.bp_field):
-            return False
-        if check_is_empty(self.email_field):
-            return False
+        # if check_is_empty(self.rue_field):
+        #     return False
+        # if check_is_empty(self.porte_field):
+        #     return False
+        # if check_is_empty(self.tel_field):
+        #     return False
+        # if check_is_empty(self.bp_field):
+        #     return False
+        # if check_is_empty(self.email_field):
+        #     return False
         if check_is_empty(self.duree_statutaire_field):
             return False
         return True

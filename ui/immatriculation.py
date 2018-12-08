@@ -55,31 +55,40 @@ class ImmatriculationSCoopViewWidget(FWidget):
             Direction Nationale de la Protection Sociale et de l’Economie Solidaire
                                     ******
             DRDSES de : {}
-            SLDSES de : {}'''.format("", "")), 0, 0, 1, 1)
+            SLDSES de : {}'''.format(self.scoop.display_region(), self.scoop.display_cercle())),
+            0, 0, 1, 0)
         # editbox.setColumnStretch(1, 0)
         editbox.setRowStretch(7, 1)
         editbox.addWidget(FHeader(
-            '''
-                REPUBLIQUE DU MALI
+            '''REPUBLIQUE DU MALI
              Un Peuple-Un But-Une Foi
-                      ******
-            '''), 0, 2)
+                      ******'''), 0, 2)
         editbox.addWidget(FHeader(
-            "<h3 style='text-align:center;'>IMMATRICULATION DE LA SOCIETE COOPERATIVE ({})</h3>".format(
-                self.dmd.scoop.denomination), "color:blue;font-size:26px;border: 4px solid white;background: black;color: white;"), 1, 0, 1, 3)
+            "<h3 style='text-align:center;'>IMMATRICULATION DE LA SOCIETE COOPERATIVE ({})</h3>"
+            .format(self.dmd.scoop.denomination),
+            "color:blue;font-size:30px;border: 1px solid white;background: blue;color: white;"), 1, 0, 1, 3)
+        # editbox.addWidget(FHeader(
+        #     u"<h2>Suivant déclaration N° : {}        <br>du {}</h2>".format(
+        #         self.dmd.id, self.dmd.declaration_date)), 2, 0)
+        editbox.addWidget(self.name_declarant_field, 2, 0)
+        editbox.addWidget(self.quality_box, 3, 0)
+        editbox.addWidget(self.procuration_field, 4, 0)
         editbox.addWidget(FHeader(
-            u"<h2>Suivant déclaration N° : {}        <br>du {}</h2>".format(
-                self.dmd.id, self.dmd.declaration_date)), 2, 0)
-        editbox.addWidget(self.name_declarant_field, 3, 0)
-        editbox.addWidget(self.quality_box, 4, 0)
-        editbox.addWidget(self.procuration_field, 5, 0)
-        editbox.addWidget(FHeader(
-            "<div style='background:white'> <b>Commune :</b> {} <br> <b>Quartier / Village : </b>{}  <br> <b> Rue : </b>{} <br> <b>Porte N° : </b>{} <br> <b>Tel</b> : {} <br> <b>BP</b> : {}  <br> <b>Email</b> : {} </h2></div>".format(
-                self.scoop.commune, self.scoop.vfq, self.scoop.rue, self.scoop.porte, self.scoop.tel, self.scoop.bp, self.scoop.email)), 2, 1, 1, 2)
+            """
+            <h2><b>Suivant déclaration N° :</b> {num} </h2>  du {date}
+            <div>
+            <b>Commune :</b> {com} <b>Quartier / Village : </b> {vfq} <br>
+            <b>Rue : </b>{rue}  <b>Porte N° : </b>{porte} <br>
+            <b>Tel</b> : {tel}  <b>BP</b> : {bp}   <b>Email</b> : {email}</div>
+            """.format(num=self.dmd.id, date=self.dmd.declaration_date,
+                       com=self.scoop.display_commune(), vfq=self.scoop.display_vfq(),
+                       rue=self.scoop.rue, porte=self.scoop.porte,
+                       tel=self.scoop.tel, bp=self.scoop.bp, email=self.scoop.email),
+            "background:#fff; color:gray; padding:1em"), 2, 1, 4, 2)
         # editbox.addWidget(FHeader("<h2>Immatriculation : N°</h2>"), 8, 0)
         # editbox.addWidget(FHeader(
         #     "<h2> Fait à {} le {}</h2>".format(self.dmd.scoop.cercle, today)), 9, 0)
-        editbox.addWidget(self.btn, 6, 0, 1, 1)
+        editbox.addWidget(self.btn, 5, 0, 1, 1)
         vbox = QVBoxLayout()
         vbox.addLayout(editbox)
         self.setLayout(vbox)
@@ -91,19 +100,18 @@ class ImmatriculationSCoopViewWidget(FWidget):
         self.procuration_field.setEnabled(False)
         if self.qlt_select == Immatriculation.TP:
             self.procuration_field.setEnabled(True)
-            if check_is_empty(self.procuration_field):
-                return False
+            # if check_is_empty(self.procuration_field):
+            #     return False
 
-    def is_valide(self):
-        if check_is_empty(self.name_declarant_field):
-            return False
-        if self.quality_box.itemData(
-                self.quality_box.currentIndex()) == Immatriculation.TP:
+    def is_not_valide(self):
+        print(check_is_empty(self.name_declarant_field))
+        if self.quality_box.itemData(self.quality_box.currentIndex()) == Immatriculation.TP:
             if check_is_empty(self.procuration_field):
-                return False
+                return True
+        return check_is_empty(self.name_declarant_field)
 
     def save(self):
-        if self.is_valide():
+        if self.is_not_valide():
             return False
 
         imma = Immatriculation()
@@ -114,6 +122,6 @@ class ImmatriculationSCoopViewWidget(FWidget):
         imma.procuration = self.procuration_field.text()
         imma.save_ident()
         self.dmd.status = self.dmd.ENDPROCCES
-        self.dmd.save()
+        # self.dmd.save()
 
         self.parent.change_context(ResgistrationManagerWidget)

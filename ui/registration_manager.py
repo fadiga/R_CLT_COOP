@@ -22,12 +22,13 @@ class ResgistrationManagerWidget(FWidget):
         super(ResgistrationManagerWidget, self).__init__(
             parent=parent, *args, **kwargs)
 
+        self.setStyleSheet(
+            "QHeaderView::section { background-color:green; color:#fff;text-transform: uppercase;font:bold }")
         self.parent = parent
 
         self.search_field = LineEdit()
         self.search_field.setPlaceholderText("Rechercher une demande")
-        # self.search_field.setMaximumWidth(400)
-        self.search_field.setMaximumSize(900, 100)
+        self.search_field.setMinimumSize(900, 100)
         self.search_field.textChanged.connect(self.finder)
 
         self.string_list = []

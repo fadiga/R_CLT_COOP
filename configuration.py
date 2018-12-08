@@ -35,6 +35,6 @@ class Config(CConstants):
     APP_LOGO_ICO = os.path.join(img_media, "logo.ico")
 
     BASE_URL = "http://192.168.6.6:9009/"
-    # BASE_URL = "http://fadcorp.ml/"
+    BASE_URL = "https://msah.ml/"
     SERV = True
     EXCLUDE_MENU_ADMIN = ["del_all"]

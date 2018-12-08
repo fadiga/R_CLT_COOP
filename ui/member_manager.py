@@ -80,12 +80,14 @@ class MemberTableWidget(FTableWidget):
     def __init__(self, parent, * args, **kwargs):
 
         FTableWidget.__init__(self, parent=parent, *args, **kwargs)
+        self.setStyleSheet(
+            "QHeaderView::section { background-color:green; color:#fff;text-transform: uppercase;font:bold}")
         self.parent = parent
         self.dmd = self.parent.dmd
         # self.sorter = True
         self.stretch_columns = [0, 1, 2, 3, 4]
         self.align_map = {0: 'l', 1: 'l', 2: 'r', 3: 'r', 4: 'r'}
-        self.display_vheaders = False
+        # self.display_vheaders = False
         self.hheaders = [
             "Nom complet", "sexe", "Date naissance", "Téléphone", "poste", "", ""]
         self.refresh_()

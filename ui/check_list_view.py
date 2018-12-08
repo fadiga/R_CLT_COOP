@@ -562,70 +562,70 @@ class CheckListViewWidget(FWidget):
                 self.compte_check.isChecked() and
                 self.dispositions_check.isChecked() and
                 self.pv_delib_ca_check.isChecked() and
-                not check_is_empty(self.forme_scoop_status_field) and
-                not check_is_empty(self.forme_scoop_ri_field) and
-                not check_is_empty(self.denomination_status_field) and
-                not check_is_empty(self.denomination_ri_field) and
-                not check_is_empty(self.nature_domaine_status_field) and
-                not check_is_empty(self.nature_domaine_ri_field) and
-                not check_is_empty(self.duree_status_field) and
-                not check_is_empty(self.duree_ri_field) and
-                not check_is_empty(self.lien_commun_status_field) and
-                not check_is_empty(self.lien_commun_ri_field) and
-                not check_is_empty(self.coord_initiateur_status_field) and
-                not check_is_empty(self.coord_initiateur_ri_field) and
-                not check_is_empty(self.max_min_admin_cg_status_field) and
-                not check_is_empty(self.max_min_admin_cg_ri_field) and
-                not check_is_empty(self.max_min_admin_ca_status_field) and
-                not check_is_empty(self.max_min_admin_ca_ri_field) and
-                not check_is_empty(self.dispositions_cg_status_field) and
-                not check_is_empty(self.dispositions_cg_ri_field) and
-                not check_is_empty(self.dispositions_ca_status_field) and
-                not check_is_empty(self.dispositions_ca_ri_field) and
-                not check_is_empty(self.max_min_cs_s_status_field) and
-                not check_is_empty(self.max_min_cs_s_ri_field) and
-                not check_is_empty(self.max_min_cs_ca_status_field) and
-                not check_is_empty(self.max_min_cs_ca_ri_field) and
-                not check_is_empty(self.dispositions_mo_status_field) and
-                not check_is_empty(self.dispositions_mo_ri_field) and
-                not check_is_empty(self.mandat_cs_status_field) and
-                not check_is_empty(self.mandat_cs_ri_field) and
-                not check_is_empty(self.parts_sociales_status_field) and
-                not check_is_empty(self.parts_sociales_ri_field) and
-                not check_is_empty(self.declatation_status_field) and
-                not check_is_empty(self.declatation_ri_field) and
-                not check_is_empty(self.id_apport_nature_status_field) and
-                not check_is_empty(self.id_apport_nature_ri_field) and
-                not check_is_empty(self.evaluation_apport_status_field) and
-                not check_is_empty(self.evaluation_apport_ri_field) and
-                not check_is_empty(self.capital_social_status_field) and
-                not check_is_empty(self.capital_social_ri_field) and
-                not check_is_empty(self.valeur_nominale_status_field) and
-                not check_is_empty(self.valeur_nominale_ri_field) and
-                not check_is_empty(self.stipulations_status_field) and
-                not check_is_empty(self.stipulations_ri_field) and
-                not check_is_empty(self.modalite_status_field) and
-                not check_is_empty(self.modalite_ri_field) and
-                not check_is_empty(self.signature_int_status_field) and
-                not check_is_empty(self.signature_int_ri_field) and
-                not check_is_empty(self.etendue_status_field) and
-                not check_is_empty(self.etendue_ri_field) and
-                not check_is_empty(self.rendement_status_field) and
-                not check_is_empty(self.rendement_ri_field) and
-                not check_is_empty(self.remuneration_status_field) and
-                not check_is_empty(self.remuneration_ri_field) and
-                not check_is_empty(self.limite_imposee_status_field) and
-                not check_is_empty(self.limite_imposee_ri_field) and
-                not check_is_empty(self.indemnit_status_field) and
-                not check_is_empty(self.indemnit_ri_field) and
-                not check_is_empty(self.souscription_status_field) and
-                not check_is_empty(self.souscription_ri_field) and
-                not check_is_empty(self.suspension_status_field) and
-                not check_is_empty(self.suspension_ri_field) and
-                not check_is_empty(self.attribution_status_field) and
-                not check_is_empty(self.attribution_ri_field) and
-                not check_is_empty(self.prescriptions_status_field) and
-                not check_is_empty(self.prescriptions_ri_field))
+                not check_is_empty(self.forme_scoop_status_field, zero=False) and
+                not check_is_empty(self.forme_scoop_ri_field, zero=False) and
+                not check_is_empty(self.denomination_status_field, zero=False) and
+                not check_is_empty(self.denomination_ri_field, zero=False) and
+                not check_is_empty(self.nature_domaine_status_field, zero=False) and
+                not check_is_empty(self.nature_domaine_ri_field, zero=False) and
+                not check_is_empty(self.duree_status_field, zero=False) and
+                not check_is_empty(self.duree_ri_field, zero=False) and
+                not check_is_empty(self.lien_commun_status_field, zero=False) and
+                not check_is_empty(self.lien_commun_ri_field, zero=False) and
+                not check_is_empty(self.coord_initiateur_status_field, zero=False) and
+                not check_is_empty(self.coord_initiateur_ri_field, zero=False) and
+                not check_is_empty(self.max_min_admin_cg_status_field, zero=False) and
+                not check_is_empty(self.max_min_admin_cg_ri_field, zero=False) and
+                not check_is_empty(self.max_min_admin_ca_status_field, zero=False) and
+                not check_is_empty(self.max_min_admin_ca_ri_field, zero=False) and
+                not check_is_empty(self.dispositions_cg_status_field, zero=False) and
+                not check_is_empty(self.dispositions_cg_ri_field, zero=False) and
+                not check_is_empty(self.dispositions_ca_status_field, zero=False) and
+                not check_is_empty(self.dispositions_ca_ri_field, zero=False) and
+                not check_is_empty(self.max_min_cs_s_status_field, zero=False) and
+                not check_is_empty(self.max_min_cs_s_ri_field, zero=False) and
+                not check_is_empty(self.max_min_cs_ca_status_field, zero=False) and
+                not check_is_empty(self.max_min_cs_ca_ri_field, zero=False) and
+                not check_is_empty(self.dispositions_mo_status_field, zero=False) and
+                not check_is_empty(self.dispositions_mo_ri_field, zero=False) and
+                not check_is_empty(self.mandat_cs_status_field, zero=False) and
+                not check_is_empty(self.mandat_cs_ri_field, zero=False) and
+                not check_is_empty(self.parts_sociales_status_field, zero=False) and
+                not check_is_empty(self.parts_sociales_ri_field, zero=False) and
+                not check_is_empty(self.declatation_status_field, zero=False) and
+                not check_is_empty(self.declatation_ri_field, zero=False) and
+                not check_is_empty(self.id_apport_nature_status_field, zero=False) and
+                not check_is_empty(self.id_apport_nature_ri_field, zero=False) and
+                not check_is_empty(self.evaluation_apport_status_field, zero=False) and
+                not check_is_empty(self.evaluation_apport_ri_field, zero=False) and
+                not check_is_empty(self.capital_social_status_field, zero=False) and
+                not check_is_empty(self.capital_social_ri_field, zero=False) and
+                not check_is_empty(self.valeur_nominale_status_field, zero=False) and
+                not check_is_empty(self.valeur_nominale_ri_field, zero=False) and
+                not check_is_empty(self.stipulations_status_field, zero=False) and
+                not check_is_empty(self.stipulations_ri_field, zero=False) and
+                not check_is_empty(self.modalite_status_field, zero=False) and
+                not check_is_empty(self.modalite_ri_field, zero=False) and
+                not check_is_empty(self.signature_int_status_field, zero=False) and
+                not check_is_empty(self.signature_int_ri_field, zero=False) and
+                not check_is_empty(self.etendue_status_field, zero=False) and
+                not check_is_empty(self.etendue_ri_field, zero=False) and
+                not check_is_empty(self.rendement_status_field, zero=False) and
+                not check_is_empty(self.rendement_ri_field, zero=False) and
+                not check_is_empty(self.remuneration_status_field, zero=False) and
+                not check_is_empty(self.remuneration_ri_field, zero=False) and
+                not check_is_empty(self.limite_imposee_status_field, zero=False) and
+                not check_is_empty(self.limite_imposee_ri_field, zero=False) and
+                not check_is_empty(self.indemnit_status_field, zero=False) and
+                not check_is_empty(self.indemnit_ri_field, zero=False) and
+                not check_is_empty(self.souscription_status_field, zero=False) and
+                not check_is_empty(self.souscription_ri_field, zero=False) and
+                not check_is_empty(self.suspension_status_field, zero=False) and
+                not check_is_empty(self.suspension_ri_field, zero=False) and
+                not check_is_empty(self.attribution_status_field, zero=False) and
+                not check_is_empty(self.attribution_ri_field, zero=False) and
+                not check_is_empty(self.prescriptions_status_field, zero=False) and
+                not check_is_empty(self.prescriptions_ri_field, zero=False))
 
     def add_element(self, objet_, row, text, field1, field2, helper=None):
         field1.textChanged.connect(self.save)

@@ -30,12 +30,13 @@ class CooperativeSocietyViewWidget(FWidget):
         self.parent = parent
         self.search_field = LineEdit()
         self.search_field.setPlaceholderText("Rechercher une coopérative")
-        self.search_field.setMaximumSize(900, 80)
+        self.search_field.setMinimumSize(900, 100)
         self.search_field.textChanged.connect(self.finder)
 
         self.btt_xlsx_export = BttExportXLSX("")
         self.btt_xlsx_export.clicked.connect(self.export_xlsx)
         self.btt_xlsx_export.setMaximumWidth(40)
+        self.btt_xlsx_export.setEnabled(False)
         self.string_list = []
         self.title_field = FPageTitle("Gestion des Sociétés coopératives")
 
@@ -66,9 +67,11 @@ class MemberTableWidget(FTableWidget):
     def __init__(self, parent, * args, **kwargs):
 
         FTableWidget.__init__(self, parent=parent, *args, **kwargs)
+        self.setStyleSheet(
+            "QHeaderView::section { background-color:green; color:#fff;text-transform: uppercase;font:bold}")
         self.parent = parent
         # self.sorter = True
-        self.stretch_columns = [0, 1, 2, 3, 4]
+        self.stretch_columns = [0, 1, 2, 3, 4, 5]
         self.align_map = {0: 'l', 1: 'l', 2: 'r', 3: 'r', 4: 'r'}
         self.display_vheaders = False
         self.hheaders = [
@@ -84,13 +87,18 @@ class MemberTableWidget(FTableWidget):
         self.hideColumn(len(self.hheaders) - 1)
 
     def set_data_for(self):
-        qs = CooperativeCompanie.select().filter(CooperativeCompanie.created == True)
-        qs = qs.select().where(
-            CooperativeCompanie.denomination.contains(self.parent.search_field.text())).order_by(
+        self.qs = CooperativeCompanie.select().filter(
+            CooperativeCompanie.created == True)
+        self.qs = self.qs.select().where(
+            CooperativeCompanie.denomination.contains(
+                self.parent.search_field.text())).order_by(
             CooperativeCompanie.start_date.asc())
         self.data = [(coopc.immatricule, coopc.denomination, coopc.commercial_name,
                       coopc.display_activity(), coopc.display_spinneret(),
-                      coopc.forme, coopc.id) for coopc in qs]
+                      coopc.display_forme(), coopc.id) for coopc in self.qs]
+
+        if len(self.data) != 0:
+            self.parent.btt_xlsx_export.setEnabled(True)
 
     def _item_for_data(self, row, column, data, context=None):
         if column == 0:
@@ -105,7 +113,6 @@ class MemberTableWidget(FTableWidget):
     def click_item(self, row, column, *args):
         self.choix = CooperativeCompanie.filter(id=self.data[row][-1]).get()
         if column == 0:
-
             from export_immat_pdf import pdf_maker
             pdf_file = pdf_maker(
                 "Immatricule", Demande.filter(scoop=self.choix).get())
@@ -116,20 +123,63 @@ class MemberTableWidget(FTableWidget):
                 CooperativeSocietyDialog, modal=True, scoop=self.choix)
 
     def dict_data(self):
-        title = "Movements"
+        data = [(
+            scp.immatricule,
+            scp.denomination,
+            scp.commercial_name,
+            scp.created_year,
+            scp.display_activity(),
+            scp.display_spinneret(),
+            scp.display_forme(),
+            int(scp.apports_numeraire) + int(scp.apports_nature) +
+            int(scp.apports_industrie),
+            scp.apports_numeraire,
+            scp.apports_nature,
+            scp.apports_industrie,
+            scp.display_cercle(),
+            scp.display_commune(),
+            scp.display_vfq(),
+            scp.rue,
+            scp.porte,
+            scp.tel,
+            scp.bp,
+            scp.email,
+            scp.duree_statutaire
+        ) for scp in self.qs]
+        self.scp = self.qs.where(CooperativeCompanie.id == 1).get()
+        title = "SCOOP de {}".format(self.scp.display_cercle())
+        hheaders = [
+            "Immatricule",
+            "Dénomination Sociale de la société coopérative",
+            "Nom Commercial / Sigle / Enseigne",
+            "Année de création de la société coopérative",
+            "Activités exercées",
+            "Filière",
+            "Forme de la société coopérative",
+            "Montant total",
+            "Montant apports en numéraire",
+            "Montant apports en nature",
+            "Montant apports en industrie",
+            "Cercle",
+            "Commune",
+            "Village/Fraction/Quartier",
+            "Rue",
+            "Porte",
+            "Tel",
+            "BP",
+            "E-mail",
+            "Durée statutaire de la société coopérative",
+        ]
         return {
             'file_name': title,
-            'headers': self.hheaders[:-1],
-            'data': self.data,
+            'headers': hheaders,
+            'data': data,
             "extend_rows": [],
             'sheet': title,
-            # 'title': self.title,
             'widths': self.stretch_columns,
-            'format_money': ["C:C", "D:D", "E:E", ],
+            'format_money': ["H:H", "I:I", "J:J", ],
             # 'exclude_row': len(self.data) - 1,
             # 'date': self.parent.now,
-            # 'others': [("A7", "C7", "Compte : {}".format(self.provider_clt)),
-            #            ("A8", "B8", "Solde au {}: {}".format(
-            # self.parent.now, device_amount(self.balance_tt,
-            # self.provider_clt.id))), ],
+            'others': [("A5", "C5", "DRDSES : {}".format(self.scp.display_region())),
+                       ("A6", "B6", "SLDSES: {}".format(self.scp.display_cercle()))],
         }
