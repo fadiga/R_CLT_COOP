@@ -101,9 +101,10 @@ class MemberTableWidget(FTableWidget):
             self.parent.btt_xlsx_export.setEnabled(True)
 
     def _item_for_data(self, row, column, data, context=None):
-        if column == 0:
-            return QTableWidgetItem(QIcon(
-                u"{}find.png".format(Config.img_cmedia)), "{}".format(self.data[0][0]))
+        # if column == 0:
+        #     return QTableWidgetItem(QIcon(
+        # u"{}find.png".format(Config.img_cmedia)),
+        # "{}".format(self.data[0][0]))
         if column == len(self.data[0]) - 1:
             return QTableWidgetItem(QIcon(
                 u"{}find.png".format(Config.img_cmedia)), "Voir")

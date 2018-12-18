@@ -10,6 +10,10 @@ def data_json():
     return data
 
 
+def get_imm_code(slug):
+    return get_entities().get(slug).get("imm_code")
+
+
 def get_entities():
     return data_json().get("entities")
 

@@ -39,5 +39,6 @@ class MainWindow(FMainWindow):
         return self.width() - 100
 
     def exit(self):
+        # print("exit")
         self.logout()
         self.close()

@@ -11,7 +11,7 @@ from datetime import datetime
 from peewee import (DateTimeField, DateField, CharField,
                     IntegerField, BooleanField, ForeignKeyField)
 from data_helper import (get_entity_name, get_postes, get_formes, get_qualities,
-                         get_activities, get_spinneret_activites)
+                         get_activities, get_spinneret_activites, get_imm_code)
 from Common.models import BaseModel
 
 FDATE = u"%c"
@@ -199,7 +199,22 @@ class Immatriculation(BaseModel):
         return "{}{}".format(self.identifiant, self.full_name)
 
     def create_ident(self):
-        return "R-{}-M5d3/00111/{}".format(NOW.year, "B")
+        ident = "R-{year}-{cercle_code}/{incr}/{forme}".format(
+            year=self.date.year, cercle_code=get_imm_code(
+                self.scoop.cercle), incr=self.incr(), forme=self.get_forme_code())
+        # print(ident)
+        return ident
+
+    def incr(self):
+        return self.add("0000", str(self.scoop.id))
+
+    def add(self, x, y):
+        r = str(int(x) + int(y)).zfill(len(x))
+        return r
+
+    def get_forme_code(self):
+        print(self.scoop.forme)
+        return "A" if self.scoop.forme == "a" else "B"
 
     def display_quality(self):
         return get_qualities().get(self.quality)
