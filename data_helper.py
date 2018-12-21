@@ -14,6 +14,10 @@ def get_imm_code(slug):
     return get_entities().get(slug).get("imm_code")
 
 
+def get_offices():
+    return data_json().get("offices")
+
+
 def get_entities():
     return data_json().get("entities")
 
@@ -51,6 +55,18 @@ def get_spinneret_activites(act):
 
 def get_entity_name(slug):
     return get_entities().get(slug).get("name")
+
+
+def office_name(slug):
+    return get_offices().get(slug).get("name")
+
+
+def office_region(slug):
+    return get_offices().get(slug).get("region")
+
+
+def office_cercle(slug):
+    return get_offices().get(slug).get("cercle")
 
 
 def regions():

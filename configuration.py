@@ -37,4 +37,4 @@ class Config(CConstants):
     BASE_URL = "http://192.168.6.6:9009/"
     # BASE_URL = "https://msah.ml/"
     SERV = True
-    EXCLUDE_MENU_ADMIN = ["del_all"]
+    EXCLUDE_MENU_ADMIN = ["del_all", "theme"]

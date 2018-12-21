@@ -11,7 +11,7 @@ from PyQt4.QtGui import (
 from Common.ui.common import (ExtendedComboBox, FWidget, FormatDate, LineEdit,
                               Button_save, FLabel, FRLabel, IntLineEdit)
 from Common.ui.util import device_amount, check_is_empty, is_int
-from models import (Demande, CooperativeCompanie, Settings,
+from models import (Demande, CooperativeCompanie, Office,
                     CheckList)
 from data_helper import (entity_children, get_formes, get_spinneret_activites,
                          get_activities)
@@ -28,7 +28,7 @@ class RegistrationViewWidget(FWidget):
         self.parent = parent
         self.parentWidget().set_window_title("FORMULAIRE D’IMMATRICULATION")
         self.title = FLabel("<h3>FORMULAIRE D’IMMATRICULATION</h3>")
-        self.sttg = Settings.select().where(Settings.id == 1).get()
+        self.office = Office.select().where(Office.id == 1).get()
         self.created_year_field = IntLineEdit()
         self.duree_statutaire_field = IntLineEdit()
         self.rue_field = IntLineEdit()
@@ -67,9 +67,8 @@ class RegistrationViewWidget(FWidget):
         for index, value in enumerate(self.formes_list):
             self.formes_box.addItem(
                 "{}".format(self.formes_list.get(value).upper()), value)
-        stt = Settings.select().where(Settings.id == 1).get()
 
-        self.commune_list = entity_children(stt.slug_cercle).items()
+        self.commune_list = entity_children(self.office.slug_cercle).items()
         self.commune_box = ExtendedComboBox()
         for index, value in enumerate(self.commune_list):
             self.commune_box.addItem(
@@ -122,7 +121,7 @@ class RegistrationViewWidget(FWidget):
         self.addresGroupBox = QGroupBox("7. Adresse du siège social")
         addres_gribox = QGridLayout()
         addres_gribox.addWidget(FRLabel("Cercle :"), 0, 0)
-        addres_gribox.addWidget(FLabel(stt.cercle_name()), 0, 1)
+        addres_gribox.addWidget(FLabel(self.office.cercle_name()), 0, 1)
         addres_gribox.addWidget(FRLabel("Commune :"), 1, 0)
         addres_gribox.addWidget(self.commune_box, 1, 1)
         # addres_gribox.addWidget(self.vline, 0, 3, 2, 5)
@@ -236,8 +235,8 @@ class RegistrationViewWidget(FWidget):
         self.scoop.apports_nature = is_int(self.apports_nature_field.text())
         self.scoop.apports_industrie = is_int(
             self.apports_industrie_field.text())
-        self.scoop.region = self.sttg.slug_region
-        self.scoop.cercle = self.sttg.slug_cercle
+        self.scoop.region = self.office.slug_region
+        self.scoop.cercle = self.office.slug_cercle
         self.scoop.commune = self.commune_box.itemData(
             self.commune_box.currentIndex())
         self.scoop.vfq = self.vfq_box.itemData(self.vfq_box.currentIndex())

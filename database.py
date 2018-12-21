@@ -5,7 +5,7 @@
 from __future__ import (unicode_literals, absolute_import, division,
                         print_function)
 
-from models import (CooperativeMember, Settings,
+from models import (CooperativeMember, Office,
                     CooperativeCompanie, CheckList, Demande, Immatriculation)
 
 from Common.cdatabase import AdminDatabase
@@ -17,5 +17,5 @@ class Setup(AdminDatabase):
 
     def __init__(self):
         super(AdminDatabase, self).__init__()
-        for md in [CooperativeMember, CooperativeCompanie, Demande, CheckList, Settings, Immatriculation]:
+        for md in [Office, CooperativeMember, CooperativeCompanie, Demande, CheckList, Immatriculation]:
             self.LIST_CREAT.append(md)
