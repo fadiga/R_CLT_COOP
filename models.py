@@ -214,7 +214,7 @@ class CheckList(BaseModel):
 
 class CooperativeCompanie(BaseModel):
 
-    office = CharField(null=True)
+    office = ForeignKeyField(Office)
     commune = CharField(null=True)
     vfq = CharField(null=True)
     rue = IntegerField(null=True)
@@ -260,10 +260,10 @@ class CooperativeCompanie(BaseModel):
         return get_spinneret_activites(self.activity).get(self.spinneret)
 
     def display_region(self):
-        return get_entity_name(self.office.region)
+        return get_entity_name(self.office.slug_region)
 
     def display_cercle(self):
-        return get_entity_name(self.office.cercle)
+        return get_entity_name(self.office.slug_cercle)
 
     def display_commune(self):
         return get_entity_name(self.commune)
@@ -274,7 +274,7 @@ class CooperativeCompanie(BaseModel):
     def data(self):
 
         return {
-            "office": self.office,
+            "office": self.office.slug,
             "commune": self.commune,
             "vfq": self.vfq,
             "rue": self.rue,
@@ -315,8 +315,8 @@ class Immatriculation(BaseModel):
 
     def create_ident(self):
         ident = "R-{year}-{cercle_code}/{incr}/{forme}".format(
-            year=self.date.year, cercle_code=get_imm_code(
-                self.scoop.cercle), incr=self.incr(), forme=self.get_forme_code())
+            year=self.date.year, cercle_code=self.scoop.office.slug,
+            incr=self.incr(), forme=self.get_forme_code())
         # print(ident)
         return ident
 
@@ -328,7 +328,6 @@ class Immatriculation(BaseModel):
         return r
 
     def get_forme_code(self):
-        print(self.scoop.forme)
         return "A" if self.scoop.forme == "a" else "B"
 
     def display_quality(self):

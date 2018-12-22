@@ -28,7 +28,7 @@ class ResgistrationManagerWidget(FWidget):
 
         self.search_field = LineEdit()
         self.search_field.setPlaceholderText("Rechercher une demande")
-        self.search_field.setMinimumSize(900, 100)
+        self.search_field.setMinimumSize(600, 80)
         self.search_field.textChanged.connect(self.finder)
 
         self.string_list = []

@@ -4,11 +4,11 @@
 
 from datetime import datetime
 from PyQt4.QtCore import QDate
-from PyQt4.QtGui import (QVBoxLayout, QDialog, QDateEdit,
+from PyQt4.QtGui import (QVBoxLayout, QDialog, QTextEdit,
                          QFormLayout, QComboBox)
 
 import peewee
-from Common.ui.util import check_is_empty, field_error
+from Common.ui.util import check_is_empty, field_error, is_int
 from Common.ui.common import (
     FWidget, Button, FormLabel, LineEdit, IntLineEdit, FormatDate)
 
@@ -26,7 +26,7 @@ class EditOrAddMemberDialog(QDialog, FWidget):
         self.scoop = scoop
         self.parent = parent
         full_name = ""
-        self.ddn_field = QDateEdit(QDate(QDate.currentDate()))
+        self.ddn_field = FormatDate(QDate(QDate.currentDate()))
 
         addres = ""
         nationality = ""
@@ -70,10 +70,10 @@ class EditOrAddMemberDialog(QDialog, FWidget):
         # print("DE", ddn)
         # self.ddn_field.setDate(ddn)
         # self.ddn_field = QDateEdit(QDate(ddn))
-        self.addres_field = LineEdit(addres)
+        self.addres_field = QTextEdit(addres)
         self.nationality_field = LineEdit(nationality)
         self.phone_field = IntLineEdit(phone)
-        # self.phone_field.setInputMask("D9.99.99.99")
+        self.phone_field.setInputMask("## ## ## ##")
         self.poste_list = get_postes()
         self.poste_box = QComboBox()
         for index, value in enumerate(self.poste_list):
@@ -87,10 +87,10 @@ class EditOrAddMemberDialog(QDialog, FWidget):
         formbox.addRow(FormLabel(u"Nom complet : *"), self.full_name_field)
         formbox.addRow(FormLabel(u"Sexe :"), self.sex_box)
         formbox.addRow(FormLabel(u"Date de naissance :"), self.ddn_field)
-        formbox.addRow(FormLabel(u"Adresse :"), self.addres_field)
+        formbox.addRow(FormLabel(u"Poste occupé :"), self.poste_box)
         formbox.addRow(FormLabel(u"Nationalité :"), self.nationality_field)
         formbox.addRow(FormLabel(u"Téléphone :"), self.phone_field)
-        formbox.addRow(FormLabel(u"Poste occupé :"), self.poste_box)
+        formbox.addRow(FormLabel(u"Adresse :"), self.addres_field)
 
         butt = Button(u"Enregistrer")
         butt.clicked.connect(self.save_edit)
@@ -99,24 +99,33 @@ class EditOrAddMemberDialog(QDialog, FWidget):
         vbox.addLayout(formbox)
         self.setLayout(vbox)
 
+    def is_valide(self):
+        if check_is_empty(self.full_name_field):
+            return False
+        if check_is_empty(self.ddn_field):
+            return False
+        if check_is_empty(self.nationality_field):
+            return False
+        if check_is_empty(self.phone_field):
+            return False
+        return True
+
     def save_edit(self):
         ''' add operation '''
+        if not self.is_valide():
+            return
         print("Save")
         self.member.scoop = self.scoop
         self.member.full_name = self.full_name_field.text()
         self.member.sex = self.sex_box.itemData(
             self.sex_box.currentIndex())
         self.member.ddn = self.ddn_field.text()
-        self.member.addres = self.addres_field.text()
+        self.member.addres = self.addres_field.toPlainText()
         self.member.nationality = self.nationality_field.text()
         phone = self.phone_field.text()
-        if phone != "":
-            self.member.phone = int(phone)
+        self.member.phone = is_int(phone)
         self.member.poste = self.poste_box.itemData(
             self.poste_box.currentIndex())
-        # field_error
-        if check_is_empty(self.full_name_field):
-            return
         try:
             self.member.save()
             self.close()

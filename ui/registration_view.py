@@ -30,16 +30,18 @@ class RegistrationViewWidget(FWidget):
         self.title = FLabel("<h3>FORMULAIRE D’IMMATRICULATION</h3>")
         self.office = Office.select().where(Office.id == 1).get()
         self.created_year_field = IntLineEdit()
+        self.created_year_field.setInputMask('####')
         self.duree_statutaire_field = IntLineEdit()
         self.rue_field = IntLineEdit()
         self.porte_field = IntLineEdit()
         self.tel_field = IntLineEdit()
+        self.tel_field.setInputMask('## ## ## ##')
         self.bp_field = IntLineEdit()
         self.email_field = LineEdit()
         self.denomination_field = LineEdit()
         self.commercial_name_field = LineEdit()
         self.declaration_date_field = FormatDate(QDate.currentDate())
-        self.declaration_date_field.setMaximumWidth(200)
+        self.declaration_date_field.setMaximumWidth(130)
         self.total_amount = FLabel()
         self.apports_numeraire_field = IntLineEdit()
         self.apports_numeraire_field.textChanged.connect(self.cal_total)
@@ -49,10 +51,10 @@ class RegistrationViewWidget(FWidget):
         self.apports_industrie_field.textChanged.connect(self.cal_total)
 
         self.spinneret_box = QComboBox()
-        self.spinneret_box.setMaximumWidth(280)
+        self.spinneret_box.setMaximumWidth(350)
 
         self.activites_box = QComboBox()
-        self.activites_box.setMaximumWidth(280)
+        self.activites_box.setMaximumWidth(350)
         self.activites_box.currentIndexChanged.connect(self.sp_change_select)
         self.activities_list = get_activities()
         for index, value in enumerate(self.activities_list):
@@ -62,7 +64,7 @@ class RegistrationViewWidget(FWidget):
             #     self.box_store.setCurrentIndex(index)
 
         self.formes_box = QComboBox()
-        self.formes_box.setMaximumWidth(200)
+        self.formes_box.setMaximumWidth(350)
         self.formes_list = get_formes()
         for index, value in enumerate(self.formes_list):
             self.formes_box.addItem(
@@ -111,7 +113,7 @@ class RegistrationViewWidget(FWidget):
             "6.3 Montant apports en industrie :"), self.apports_industrie_field)
         self.capitalSGroupBox = QGroupBox("6. Capital Social Initial")
         self.capitalSGroupBox.setLayout(capital_formbox)
-        self.capitalSGroupBox.setMaximumWidth(1200)
+        self.capitalSGroupBox.setMaximumWidth(1300)
         # Adresse du siège social
 
         self.vline = QFrame()
@@ -139,7 +141,7 @@ class RegistrationViewWidget(FWidget):
         addres_gribox.addWidget(self.email_field, 1, 5)
         # addres_gribox.setColumnStretch(6, 5)
         self.addresGroupBox.setLayout(addres_gribox)
-        self.addresGroupBox.setMaximumWidth(1200)
+        self.addresGroupBox.setMaximumWidth(1300)
         # Durée statutaire de la société coopérative
         duree_fbox = QFormLayout()
         duree_fbox.addRow(FLabel(
@@ -150,6 +152,7 @@ class RegistrationViewWidget(FWidget):
         butt_and_continous.clicked.connect(self.save_and_goto_add_member)
 
         butt_and_continous.setMaximumWidth(300)
+        duree_fbox.addRow(FLabel(""), FLabel(""))
         duree_fbox.addRow(butt, butt_and_continous)
 
         vbox = QVBoxLayout()
@@ -207,8 +210,8 @@ class RegistrationViewWidget(FWidget):
         #     return False
         # if check_is_empty(self.porte_field):
         #     return False
-        # if check_is_empty(self.tel_field):
-        #     return False
+        if check_is_empty(self.tel_field):
+            return False
         # if check_is_empty(self.bp_field):
         #     return False
         # if check_is_empty(self.email_field):
@@ -221,6 +224,7 @@ class RegistrationViewWidget(FWidget):
         if not self.is_valide():
             return
         self.scoop = CooperativeCompanie()
+        self.scoop.office = self.office
         self.scoop.created_year = is_int(self.created_year_field.text())
         self.scoop.denomination = self.denomination_field.text()
         self.scoop.commercial_name = self.commercial_name_field.text()

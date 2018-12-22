@@ -8,12 +8,13 @@ from PyQt4.QtGui import (QComboBox, QVBoxLayout, QGroupBox,
                          QFormLayout, QDialog, QTextEdit)
 from models import Office
 
-from Common.ui.util import check_is_empty
+from Common.ui.util import check_is_empty, is_int
 from data_helper import (
-    entity_children, get_offices, office_name, office_region, get_entity_name)
+    get_offices, office_name, office_region, get_entity_name,
+    office_cercle)
 
 from Common.ui.common import (
-    FWidget, LineEdit, Button_save, FormLabel, IntLineEdit)
+    FWidget, LineEdit, Button_save, FormLabel, IntLineEdit, FLabel)
 
 
 class NewOrEditOfficeViewWidget(QDialog, FWidget):
@@ -40,13 +41,10 @@ class NewOrEditOfficeViewWidget(QDialog, FWidget):
         # print(get_offices())
         self.office_list = get_offices()
         self.region_box = QComboBox()
-        # self.region_box.setMaximumWidth(200)
-        self.cercle_box = QComboBox()
-        self.region_box.currentIndexChanged.connect(self.change_select)
-        self.region_list = {}
-
-        # self.name_office = LineEdit()
-        self.phone = IntLineEdit()
+        self.region_label = FLabel()
+        self.cercle_label = FLabel()
+        self.phone_field = IntLineEdit()
+        self.phone_field.setInputMask('## ## ## ##')
         self.bp = LineEdit()
         self.adress_org = QTextEdit()
         self.email_org = LineEdit()
@@ -54,21 +52,11 @@ class NewOrEditOfficeViewWidget(QDialog, FWidget):
         for index, value in enumerate(self.office_list):
             self.office_box.addItem("{}".format(office_name(value)), value)
 
-        for index, value in enumerate(self.region_list):
-            print(value)
-            self.region_box.addItem(
-                "{}".format(self.region_list.get(value).upper()), value)
-
-        self.cercle_list = self.get_cercle_list()
-        for index, value in enumerate(self.cercle_list):
-            self.cercle_box.addItem(
-                "{}".format(self.cercle_list.get(value).upper()), value)
-
         formbox = QFormLayout()
         formbox.addRow(FormLabel(u"Nom service :"), self.office_box)
-        formbox.addRow(FormLabel(u"Région"), self.region_box)
-        formbox.addRow(FormLabel(u"Cercle"), self.cercle_box)
-        formbox.addRow(FormLabel(u"Tel :"), self.phone)
+        formbox.addRow(FormLabel(u"Région"), self.region_label)
+        formbox.addRow(FormLabel(u"Cercle"), self.cercle_label)
+        formbox.addRow(FormLabel(u"Tel :"), self.phone_field)
         formbox.addRow(FormLabel(u"B.P :"), self.bp)
         formbox.addRow(FormLabel(u"E-mail :"), self.email_org)
         formbox.addRow(FormLabel(u"Adresse complete :"), self.adress_org)
@@ -78,47 +66,29 @@ class NewOrEditOfficeViewWidget(QDialog, FWidget):
 
         self.organGroupBoxBtt.setLayout(formbox)
 
-    def get_region_list(self):
-        # c_dic = {}
-        r_select = office_region(self.office_box.itemData(
-            self.office_box.currentIndex()))
-        return {r_select: get_entity_name(r_select)}
-
-    def get_cercle_list(self):
-        # c_dic = {}
-        r_select = self.region_box.itemData(self.region_box.currentIndex())
-        return entity_children(r_select)
-
     def change_select_office(self):
-        self.region_box.clear()
-        self.region_list = self.get_region_list()
+        select_o = self.office_box.itemData(self.office_box.currentIndex())
+        self.r_select = office_region(select_o)
+        self.c_select = office_cercle(select_o)
+        self.region_label.setText(get_entity_name(self.r_select))
+        self.cercle_label.setText(get_entity_name(self.c_select))
 
-        for index, value in enumerate(self.region_list):
-            self.region_box.addItem(
-                "{}".format(self.region_list.get(value).upper()), value)
-
-    def change_select(self):
-        self.cercle_box.clear()
-        self.cercle_list = self.get_cercle_list()
-
-        for index, value in enumerate(self.cercle_list):
-            self.cercle_box.addItem(
-                "{}".format(self.cercle_list.get(value).upper()), value)
+    def is_valide(self):
+        if check_is_empty(self.phone_field):
+            return False
+        return True
 
     def save_edit(self):
         ''' add operation '''
 
-        office = Office()
-        office.slug = self.office_box.itemData(self.office_box.currentIndex())
-        office.slug_region = self.region_box.itemData(
-            self.region_box.currentIndex())
-        office.slug_cercle = self.cercle_box.itemData(
-            self.cercle_box.currentIndex())
-
-        if check_is_empty(self.phone):
+        if not self.is_valide():
             return
 
-        office.phone = str(self.phone.text())
+        office = Office()
+        office.slug = self.office_box.itemData(self.office_box.currentIndex())
+        office.slug_region = self.r_select
+        office.slug_cercle = self.c_select
+        office.phone = is_int(self.phone_field.text())
         office.email_org = str(self.email_org.text())
         office.bp = str(self.bp.text())
         office.adress_org = str(self.adress_org.toPlainText())
