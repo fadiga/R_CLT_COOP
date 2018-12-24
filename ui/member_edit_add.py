@@ -49,7 +49,7 @@ class EditOrAddMemberDialog(QDialog, FWidget):
         else:
             self.new = True
             self.succes_msg = u"Client a été bien enregistré"
-            self.title = u"Création d'un nouvel client"
+            self.title = u"Ajout nouveau membre"
             self.member = CooperativeMember()
         self.setWindowTitle(self.title)
 

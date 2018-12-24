@@ -11,7 +11,9 @@ from datetime import datetime
 from peewee import (DateTimeField, DateField, CharField,
                     IntegerField, BooleanField, ForeignKeyField)
 from data_helper import (get_entity_name, get_postes, get_formes, get_qualities,
-                         get_activities, get_spinneret_activites, get_imm_code)
+                         get_activities, get_spinneret_activites)
+from configuration import Config
+from Common.ui.util import date_to_str
 from Common.models import BaseModel
 
 FDATE = u"%c"
@@ -28,6 +30,10 @@ class Office(BaseModel):
     bp = CharField(verbose_name=("Code"), null=True)
     adress_org = CharField(verbose_name=("Code"), null=True)
 
+    # META
+    is_syncro = BooleanField(default=False)
+    last_update_date = DateTimeField(null=True)
+
     def region_name(self):
         return get_entity_name(self.slug_region)
 
@@ -39,12 +45,39 @@ class Office(BaseModel):
             self.slug, self.region_name(), self.cercle_name())
 
     def data(self):
+
+        import platform
         return {
-            "slug": self.slug
+            "model": "Office",
+            "slug": self.slug,
+            "slug_region": self.slug_region,
+            "slug_cercle": self.slug_cercle,
+            "app_name": Config.APP_NAME,
+            "app_version": Config.APP_VERSION,
+            'phone': self.phone,
+            'bp': self.bp,
+            'email_org': self.email_org,
+            'adress_org': self.adress_org,
+            "platform": platform.platform(),
+            "system": platform.system(),
+            "version": platform.version(),
+            "node": platform.node(),
+            "processor": platform.processor()
         }
+
+    def updated(self):
+        self.is_syncro = True
+        self.last_update_date = NOW
+        self.save()
+
+    def save_(self):
+        self.is_syncro = False
+        self.save()
 
 
 class CheckList(BaseModel):
+
+    SLUG = "-checkl_"
 
     date = DateTimeField(default=NOW)
     qualite_declarant_check = BooleanField(default=False)
@@ -132,87 +165,102 @@ class CheckList(BaseModel):
 
     def data(self):
         return {
-            "date": self.date,
-            "qualite_declarant_check": self.qualite_declarant_check,
-            "status_check": self.status_check,
-            "pieces_check": self.pieces_check,
-            "autorisation_pre_immt_check": self.autorisation_pre_immt_check,
-            "demande_immt_check": self.demande_immt_check,
-            "pv_check": self.pv_check,
-            "chronologique_check": self.chronologique_check,
-            "compte_check": self.compte_check,
-            "dispositions_check": self.dispositions_check,
-            "pv_delib_ca_check": self.pv_delib_ca_check,
-            "forme_scoop_status": self.forme_scoop_status,
-            "forme_scoop_ri": self.forme_scoop_ri,
-            "denomination_status": self.denomination_status,
-            "denomination_ri": self.denomination_ri,
-            "nature_domaine_status": self.nature_domaine_status,
-            "nature_domaine_ri": self.nature_domaine_ri,
-            "duree_status": self.duree_status,
-            "duree_ri": self.duree_ri,
-            "lien_commun_status": self.lien_commun_status,
-            "lien_commun_ri": self.lien_commun_ri,
-            "coord_initiateur_status": self.coord_initiateur_status,
-            "coord_initiateur_ri": self.coord_initiateur_ri,
-            "max_min_admin_cg_status": self.max_min_admin_cg_status,
-            "max_min_admin_cg_ri": self.max_min_admin_cg_ri,
-            "max_min_admin_ca_status": self.max_min_admin_ca_status,
-            "max_min_admin_ca_ri": self.max_min_admin_ca_ri,
-            "dispositions_cg_status": self.dispositions_cg_status,
-            "dispositions_cg_ri": self.dispositions_cg_ri,
-            "dispositions_ca_status": self.dispositions_ca_status,
-            "dispositions_ca_ri": self.dispositions_ca_ri,
-            "max_min_cs_s_status": self.max_min_cs_s_status,
-            "max_min_cs_s_ri": self.max_min_cs_s_ri,
-            "max_min_cs_ca_status": self.max_min_cs_ca_status,
-            "max_min_cs_ca_ri": self.max_min_cs_ca_ri,
-            "dispositions_mo_status": self.dispositions_mo_status,
-            "dispositions_mo_ri": self.dispositions_mo_ri,
-            "mandat_cs_status": self.mandat_cs_status,
-            "mandat_cs_ri": self.mandat_cs_ri,
-            "parts_sociales_status": self.parts_sociales_status,
-            "parts_sociales_ri": self.parts_sociales_ri,
-            "declatation_status": self.declatation_status,
-            "declatation_ri": self.declatation_ri,
-            "id_apport_numeraire_status": self.id_apport_numeraire_status,
-            "id_apport_numeraire_ri": self.id_apport_numeraire_ri,
-            "id_apport_nature_status": self.id_apport_nature_status,
-            "id_apport_nature_ri": self.id_apport_nature_ri,
-            "evaluation_apport_status": self.evaluation_apport_status,
-            "evaluation_apport_ri": self.evaluation_apport_ri,
-            "capital_social_status": self.capital_social_status,
-            "capital_social_ri": self.capital_social_ri,
-            "valeur_nominale_status": self.valeur_nominale_status,
-            "valeur_nominale_ri": self.valeur_nominale_ri,
-            "stipulations_status": self.stipulations_status,
-            "stipulations_ri": self.stipulations_ri,
-            "modalite_status": self.modalite_status,
-            "modalite_ri": self.modalite_ri,
-            "signature_int_status": self.signature_int_status,
-            "signature_int_ri": self.signature_int_ri,
-            "etendue_status": self.etendue_status,
-            "etendue_ri": self.etendue_ri,
-            "rendement_status": self.rendement_status,
-            "rendement_ri": self.rendement_ri,
-            "remuneration_status": self.remuneration_status,
-            "remuneration_ri": self.remuneration_ri,
-            "limite_imposee_status": self.limite_imposee_status,
-            "limite_imposee_ri": self.limite_imposee_ri,
-            "indemnit_status": self.indemnit_status,
-            "indemnit_ri": self.indemnit_ri,
-            "souscription_status": self.souscription_status,
-            "souscription_ri": self.souscription_ri,
-            "suspension_status": self.suspension_status,
-            "suspension_ri": self.suspension_ri,
-            "attribution_status": self.attribution_status,
-            "attribution_ri": self.attribution_ri,
-            "prescriptions_status": self.prescriptions_status,
-            "prescriptions_ri": self.prescriptions_ri,
+            "slug": "{}{}{}".format(Office.select().where(Office.id == 1).get().slug, self.SLUG, self.id),
+            "model": "CheckList",
+            "data": {
+                "date": date_to_str(self.date),
+                "qualite_declarant_check": self.qualite_declarant_check,
+                "status_check": self.status_check,
+                "pieces_check": self.pieces_check,
+                "autorisation_pre_immt_check": self.autorisation_pre_immt_check,
+                "demande_immt_check": self.demande_immt_check,
+                "pv_check": self.pv_check,
+                "chronologique_check": self.chronologique_check,
+                "compte_check": self.compte_check,
+                "dispositions_check": self.dispositions_check,
+                "pv_delib_ca_check": self.pv_delib_ca_check,
+                "forme_scoop_status": self.forme_scoop_status,
+                "forme_scoop_ri": self.forme_scoop_ri,
+                "denomination_status": self.denomination_status,
+                "denomination_ri": self.denomination_ri,
+                "nature_domaine_status": self.nature_domaine_status,
+                "nature_domaine_ri": self.nature_domaine_ri,
+                "duree_status": self.duree_status,
+                "duree_ri": self.duree_ri,
+                "lien_commun_status": self.lien_commun_status,
+                "lien_commun_ri": self.lien_commun_ri,
+                "coord_initiateur_status": self.coord_initiateur_status,
+                "coord_initiateur_ri": self.coord_initiateur_ri,
+                "max_min_admin_cg_status": self.max_min_admin_cg_status,
+                "max_min_admin_cg_ri": self.max_min_admin_cg_ri,
+                "max_min_admin_ca_status": self.max_min_admin_ca_status,
+                "max_min_admin_ca_ri": self.max_min_admin_ca_ri,
+                "dispositions_cg_status": self.dispositions_cg_status,
+                "dispositions_cg_ri": self.dispositions_cg_ri,
+                "dispositions_ca_status": self.dispositions_ca_status,
+                "dispositions_ca_ri": self.dispositions_ca_ri,
+                "max_min_cs_s_status": self.max_min_cs_s_status,
+                "max_min_cs_s_ri": self.max_min_cs_s_ri,
+                "max_min_cs_ca_status": self.max_min_cs_ca_status,
+                "max_min_cs_ca_ri": self.max_min_cs_ca_ri,
+                "dispositions_mo_status": self.dispositions_mo_status,
+                "dispositions_mo_ri": self.dispositions_mo_ri,
+                "mandat_cs_status": self.mandat_cs_status,
+                "mandat_cs_ri": self.mandat_cs_ri,
+                "parts_sociales_status": self.parts_sociales_status,
+                "parts_sociales_ri": self.parts_sociales_ri,
+                "declatation_status": self.declatation_status,
+                "declatation_ri": self.declatation_ri,
+                "id_apport_numeraire_status": self.id_apport_numeraire_status,
+                "id_apport_numeraire_ri": self.id_apport_numeraire_ri,
+                "id_apport_nature_status": self.id_apport_nature_status,
+                "id_apport_nature_ri": self.id_apport_nature_ri,
+                "evaluation_apport_status": self.evaluation_apport_status,
+                "evaluation_apport_ri": self.evaluation_apport_ri,
+                "capital_social_status": self.capital_social_status,
+                "capital_social_ri": self.capital_social_ri,
+                "valeur_nominale_status": self.valeur_nominale_status,
+                "valeur_nominale_ri": self.valeur_nominale_ri,
+                "stipulations_status": self.stipulations_status,
+                "stipulations_ri": self.stipulations_ri,
+                "modalite_status": self.modalite_status,
+                "modalite_ri": self.modalite_ri,
+                "signature_int_status": self.signature_int_status,
+                "signature_int_ri": self.signature_int_ri,
+                "etendue_status": self.etendue_status,
+                "etendue_ri": self.etendue_ri,
+                "rendement_status": self.rendement_status,
+                "rendement_ri": self.rendement_ri,
+                "remuneration_status": self.remuneration_status,
+                "remuneration_ri": self.remuneration_ri,
+                "limite_imposee_status": self.limite_imposee_status,
+                "limite_imposee_ri": self.limite_imposee_ri,
+                "indemnit_status": self.indemnit_status,
+                "indemnit_ri": self.indemnit_ri,
+                "souscription_status": self.souscription_status,
+                "souscription_ri": self.souscription_ri,
+                "suspension_status": self.suspension_status,
+                "suspension_ri": self.suspension_ri,
+                "attribution_status": self.attribution_status,
+                "attribution_ri": self.attribution_ri,
+                "prescriptions_status": self.prescriptions_status,
+                "prescriptions_ri": self.prescriptions_ri
+            }
         }
+
+    def updated(self):
+        self.is_syncro = True
+        self.last_update_date = NOW
+        self.save()
+
+    def save_(self):
+        self.is_syncro = False
+        self.save()
 
 
 class CooperativeCompanie(BaseModel):
+
+    SLUG = "-scoop_"
 
     office = ForeignKeyField(Office)
     commune = CharField(null=True)
@@ -274,33 +322,45 @@ class CooperativeCompanie(BaseModel):
     def data(self):
 
         return {
-            "office": self.office.slug,
-            "commune": self.commune,
-            "vfq": self.vfq,
-            "rue": self.rue,
-            "porte": self.porte,
-            "bp": self.bp,
-            "tel": self.tel,
-            "email": self.email,
-            "denomination": self.denomination,
-            "commercial_name": self.commercial_name,
-            "created_year": self.created_year,
-            "forme": self.forme,
-            "activity": self.activity,
-            "spinneret": self.spinneret,
-            "apports_numeraire": self.apports_numeraire,
-            "apports_nature": self.apports_nature,
-            "apports_industrie": self.apports_industrie,
-            "created": self.created,
-            "immatricule": self.immatricule,
-            "duree_statutaire": self.duree_statutaire,
-        }
+            "slug": "{}{}{}".format(self.office.slug, self.SLUG, self.id),
+            "model": "CooperativeCompanie",
+            "data": {
+                "office": self.office.slug,
+                "commune": self.commune,
+                "vfq": self.vfq,
+                "rue": self.rue,
+                "porte": self.porte,
+                "bp": self.bp,
+                "tel": self.tel,
+                "email": self.email,
+                "denomination": self.denomination,
+                "commercial_name": self.commercial_name,
+                "created_year": self.created_year,
+                "forme": self.forme,
+                "activity": self.activity,
+                "spinneret": self.spinneret,
+                "apports_numeraire": self.apports_numeraire,
+                "apports_nature": self.apports_nature,
+                "apports_industrie": self.apports_industrie,
+                "created": self.created,
+                "immatricule": self.immatricule,
+                "duree_statutaire": self.duree_statutaire,
+            }}
+
+    def updated(self):
+        self.is_syncro = True
+        self.last_update_date = NOW
+        self.save()
+
+    def save_(self):
+        self.is_syncro = False
+        self.save()
 
 
 class Immatriculation(BaseModel):
 
     TP = "tiers_avec_procuration"
-
+    SLUG = "-imm_"
     scoop = ForeignKeyField(CooperativeCompanie)
     name_declarant = CharField(verbose_name="Nom complet")
     quality = CharField(verbose_name="Qualité")
@@ -335,19 +395,30 @@ class Immatriculation(BaseModel):
 
     def save_ident(self):
         self.save()
+        self.is_syncro = False
         self.scoop.immatricule = self.create_ident()
         self.scoop.created = True
         self.scoop.end_date = self.date
         self.scoop.save()
 
     def data(self):
+        office_slug = self.scoop.office.slug
         return {
-            "scoop": self.scoop,
-            "name_declarant": self.name_declarant,
-            "quality": self.quality,
-            "date": self.date,
-            "procuration": self.procuration,
+            "slug": "{}{}{}".format(office_slug, self.SLUG, self.id),
+            "model": "Immatriculation",
+            "data": {
+                "scoop": "{}{}{}".format(office_slug, self.scoop.SLUG, self.scoop.id),
+                "name_declarant": self.name_declarant,
+                "quality": self.quality,
+                "date": self.date,
+                "procuration": self.procuration,
+            }
         }
+
+    def updated(self):
+        self.is_syncro = True
+        self.last_update_date = NOW
+        self.save()
 
 
 class Demande(BaseModel):
@@ -357,7 +428,7 @@ class Demande(BaseModel):
     CHECKLIST = 3
     IMMATRICULAITON = 4
     ENDPROCCES = 5
-
+    SLUG = "-dmd_"
     STATUS = {
         DECLARATION: "Déclaration",
         ADDMEMBER: "Ajout membre",
@@ -369,12 +440,12 @@ class Demande(BaseModel):
     declaration_date = DateField()
     check_list = ForeignKeyField(CheckList, null=True)
     scoop = ForeignKeyField(CooperativeCompanie, null=True)
-    # META
-    is_syncro = BooleanField(default=False)
-    last_update_date = DateTimeField(null=True)
     start_date = DateTimeField(default=NOW)
     status = CharField(default=DECLARATION)
     end_date = DateTimeField(null=True)
+    # META
+    is_syncro = BooleanField(default=False)
+    last_update_date = DateTimeField(null=True)
 
     def display_status(self):
         return self.STATUS.get(self.status)
@@ -383,16 +454,28 @@ class Demande(BaseModel):
         return self.scoop.denomination
 
     def data(self):
+        office_slug = self.scoop.office.slug
         return {
-            "declaration_date": self.declaration_date,
-            "check_list": self.check_list,
-            "scoop": self.scoop,
-            "is_syncro": self.is_syncro,
-            "last_update_date": self.last_update_date,
-            "start_date": self.start_date,
-            "status": self.status,
-            "end_date": self.end_date,
+            "slug": "{}{}{}".format(office_slug, self.SLUG, self.id),
+            "model": "Demande",
+            "data": {
+                "declaration_date": date_to_str(self.declaration_date),
+                "check_list": "{}{}{}".format(office_slug, self.check_list.SLUG, self.check_list.id),
+                "scoop": "{}{}{}".format(office_slug, self.scoop.SLUG, self.scoop.id),
+                "start_date": date_to_str(self.start_date),
+                "status": self.status,
+                "end_date": date_to_str(self.end_date),
+            }
         }
+
+    def updated(self):
+        self.is_syncro = True
+        self.last_update_date = NOW
+        self.save()
+
+    def save_(self):
+        self.is_syncro = False
+        self.save()
 
 
 class CooperativeMember(BaseModel):
@@ -405,6 +488,7 @@ class CooperativeMember(BaseModel):
         M: "Homme",
         F: "Femme"
     }
+    SLUG = "-member_"
 
     scoop = ForeignKeyField(CooperativeCompanie)
     full_name = CharField()
@@ -416,8 +500,8 @@ class CooperativeMember(BaseModel):
     poste = CharField(null=True)
     add_date = DateField(default=NOW)
     # META
-    # is_syncro = BooleanField(default=False)
-    # last_update_date = DateTimeField(null=True)
+    is_syncro = BooleanField(default=False)
+    last_update_date = DateTimeField(null=True)
 
     def __str__(self):
         return self.full_name
@@ -429,16 +513,30 @@ class CooperativeMember(BaseModel):
         return self.SEX.get(self.sex)
 
     def data(self):
+        office_slug = self.scoop.office.slug
         return {
-            "scoop": self.scoop,
-            "full_name": self.full_name,
-            "sex": self.sex,
-            "ddn": self.ddn,
-            "addres": self.addres,
-            "nationality": self.nationality,
-            "phone": self.phone,
-            "poste": self.poste,
-            "add_date": self.add_date,
-            "is_syncro": self.is_syncro,
-            "last_update_date": self.last_update_date
+            "slug": "{}{}{}".format(office_slug, self.SLUG, self.id),
+            "model": "CooperativeMember",
+            "data": {
+                "scoop": "{}{}{}".format(office_slug, self.scoop.SLUG, self.scoop.id),
+                "full_name": self.full_name,
+                "sex": self.sex,
+                "ddn": date_to_str(self.ddn),
+                "addres": self.addres,
+                "nationality": self.nationality,
+                "phone": self.phone,
+                "poste": self.poste,
+                "add_date": date_to_str(self.add_date),
+                # "is_syncro": self.is_syncro,
+                # "last_update_date": date_to_str(self.last_update_date)
+            }
         }
+
+    def updated(self):
+        self.is_syncro = True
+        self.last_update_date = NOW
+        self.save()
+
+    def save_(self):
+        self.is_syncro = False
+        self.save()
