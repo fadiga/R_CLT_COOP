@@ -145,7 +145,7 @@ class RegistrationViewWidget(FWidget):
         # Durée statutaire de la société coopérative
         duree_fbox = QFormLayout()
         duree_fbox.addRow(FLabel(
-            u"8. Durée statutaire de la société coopérative:"), self.duree_statutaire_field)
+            u"8. Durée statutaire de la société coopérative (ans): "), self.duree_statutaire_field)
         butt = Button_save(u"Enregistrer")
         butt.clicked.connect(self.save_and_goto_manager)
         butt_and_continous = Button_save(u"Enregistrer et continuer")
@@ -251,15 +251,15 @@ class RegistrationViewWidget(FWidget):
         self.scoop.email = self.email_field.text()
         self.scoop.duree_statutaire = is_int(
             self.duree_statutaire_field.text())
-        self.scoop.save()
+        self.scoop.save_()
         check_list = CheckList()
-        check_list.save()
+        check_list.save_()
         self.dmd = Demande()
         self.dmd.check_list = check_list
         self.dmd.declaration_date = str(self.declaration_date_field.text())
         self.dmd.scoop = self.scoop
         self.dmd.status = self.dmd.ADDMEMBER
-        self.dmd.save()
+        self.dmd.save_()
         return True
 
     def save_and_goto_add_member(self):

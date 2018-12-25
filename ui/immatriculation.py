@@ -122,6 +122,6 @@ class ImmatriculationSCoopViewWidget(FWidget):
         imma.procuration = self.procuration_field.text()
         imma.save_ident()
         self.dmd.status = self.dmd.ENDPROCCES
-        self.dmd.save()
+        self.dmd.save_()
 
         self.parent.change_context(ResgistrationManagerWidget)

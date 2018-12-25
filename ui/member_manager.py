@@ -62,7 +62,7 @@ class MemberManagerWidget(FWidget, FPeriodHolder):
 
     def end_add_member(self):
         self.dmd.status = self.dmd.CHECKLIST
-        self.dmd.save()
+        self.dmd.save_()
         from ui.check_list_view import CheckListViewWidget
         self.change_main_context(CheckListViewWidget, dmd=self.dmd)
 

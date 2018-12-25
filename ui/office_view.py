@@ -92,5 +92,5 @@ class NewOrEditOfficeViewWidget(QDialog, FWidget):
         office.email_org = str(self.email_org.text())
         office.bp = str(self.bp.text())
         office.adress_org = str(self.adress_org.toPlainText())
-        office.save()
+        office.save_()
         self.accept()

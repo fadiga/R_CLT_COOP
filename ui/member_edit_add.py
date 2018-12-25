@@ -127,7 +127,7 @@ class EditOrAddMemberDialog(QDialog, FWidget):
         self.member.poste = self.poste_box.itemData(
             self.poste_box.currentIndex())
         try:
-            self.member.save()
+            self.member.save_()
             self.close()
             self.table_p.refresh_()
             self.parent.Notify(

@@ -547,7 +547,7 @@ class CheckListViewWidget(FWidget):
             self.prescriptions_status_field.text())
         self.check_l.prescriptions_ri = self.to_int_or_none(
             self.prescriptions_ri_field.text())
-        self.check_l.save()
+        self.check_l.save_()
         if self.check_integrity_validation():
             self.butt_continous.setEnabled(True)
 
@@ -638,7 +638,7 @@ class CheckListViewWidget(FWidget):
 
     def goto_immatriculation(self):
         self.dmd.status = Demande.IMMATRICULAITON
-        self.dmd.save()
+        self.dmd.save_()
         from ui.immatriculation import ImmatriculationSCoopViewWidget
         self.change_main_context(
             ImmatriculationSCoopViewWidget, dmd=self.dmd)

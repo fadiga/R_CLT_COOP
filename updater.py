@@ -7,13 +7,14 @@ from PyQt4.QtCore import QThread, SIGNAL, QObject, Qt
 import json
 # import os
 import requests
-# import threading
+from threading import Timer, Thread, Event
 # import time
 from configuration import Config
 
 from models import (CooperativeCompanie, Demande,
                     Office, CheckList, CooperativeMember, Immatriculation)
 # from Common.ui.statusbar import GStatusBar
+from Common.ui.util import internet_on
 
 base_url = Config.BASE_URL
 
@@ -26,9 +27,9 @@ class UpdaterInit(QObject):
         if not Config.SERV:
             print("Not Serveur ")
             return
-
+        self.stopFlag = Event()
         self.check = TaskThreadServer(self)
-        self.connect(self.check, SIGNAL('setStatus'),
+        self.connect(self.check, SIGNAL('UpdaterInit'),
                      self.update_data, Qt.QueuedConnection)
         self.check.start()
 
@@ -41,6 +42,10 @@ class UpdaterInit(QObject):
     def update_data(self):
         print("update_data")
 
+        if not internet_on(base_url):
+            print("Pas de d'internet !")
+            return
+
         if Office().select().count() == 0:
             return
 
@@ -51,21 +56,22 @@ class UpdaterInit(QObject):
                 office.updated()
 
         for model in [CooperativeCompanie, CooperativeMember, CheckList, Demande, Immatriculation]:
+            # print("sending :", model)
             for m in model.all():
-                print(m)
                 if not m.is_syncro:
+                    print(m.data())
                     resp = self.sender("update-data", m.data())
+                    # print(resp)
                     if resp.get("save"):
                         m.updated()
 
-        self.emit(SIGNAL("end_update_data"))
+        # self.emit(SIGNAL("UpdaterInit"))
 
     def sender(self, url, data):
-        url = base_url + "scoop/" + url
-        print(data)
         client = requests.session()
+        url = base_url + "scoop/" + url
         response = client.get(url, data=json.dumps(data))
-        print("response : ", response)
+        # print("response : ", response)
         try:
             return json.loads(response.content.decode('UTF-8'))
         except ValueError:
@@ -77,10 +83,9 @@ class TaskThreadServer(QThread):
     def __init__(self, parent):
         QThread.__init__(self, parent)
         self.parent = parent
+        self.stopped = parent.stopFlag
 
     def run(self):
         print("RUN")
-        self.parent.update_data()
-
-        import threading
-        threading.Timer(5.0, self.parent.update_data).start()
+        while not self.stopped.wait(10):
+            self.parent.update_data()

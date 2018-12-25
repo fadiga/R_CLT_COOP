@@ -13,7 +13,7 @@ from peewee import (DateTimeField, DateField, CharField,
 from data_helper import (get_entity_name, get_postes, get_formes, get_qualities,
                          get_activities, get_spinneret_activites)
 from configuration import Config
-from Common.ui.util import date_to_str
+from Common.ui.util import date_to_str, datetime_to_str
 from Common.models import BaseModel
 
 FDATE = u"%c"
@@ -168,7 +168,7 @@ class CheckList(BaseModel):
             "slug": "{}{}{}".format(Office.select().where(Office.id == 1).get().slug, self.SLUG, self.id),
             "model": "CheckList",
             "data": {
-                "date": date_to_str(self.date),
+                "date": datetime_to_str(self.date),
                 "qualite_declarant_check": self.qualite_declarant_check,
                 "status_check": self.status_check,
                 "pieces_check": self.pieces_check,
@@ -337,14 +337,16 @@ class CooperativeCompanie(BaseModel):
                 "commercial_name": self.commercial_name,
                 "created_year": self.created_year,
                 "forme": self.forme,
-                "activity": self.activity,
-                "spinneret": self.spinneret,
+                "activity": self.activity.split(";"),
+                "spinneret": self.spinneret.split(";"),
                 "apports_numeraire": self.apports_numeraire,
                 "apports_nature": self.apports_nature,
                 "apports_industrie": self.apports_industrie,
                 "created": self.created,
                 "immatricule": self.immatricule,
                 "duree_statutaire": self.duree_statutaire,
+                "start_date": datetime_to_str(self.start_date),
+                "end_date": datetime_to_str(self.end_date),
             }}
 
     def updated(self):
@@ -394,12 +396,12 @@ class Immatriculation(BaseModel):
         return get_qualities().get(self.quality)
 
     def save_ident(self):
-        self.save()
         self.is_syncro = False
+        self.save()
         self.scoop.immatricule = self.create_ident()
         self.scoop.created = True
         self.scoop.end_date = self.date
-        self.scoop.save()
+        self.scoop.save_()
 
     def data(self):
         office_slug = self.scoop.office.slug
@@ -410,7 +412,7 @@ class Immatriculation(BaseModel):
                 "scoop": "{}{}{}".format(office_slug, self.scoop.SLUG, self.scoop.id),
                 "name_declarant": self.name_declarant,
                 "quality": self.quality,
-                "date": self.date,
+                "date": date_to_str(self.date),
                 "procuration": self.procuration,
             }
         }
@@ -462,9 +464,9 @@ class Demande(BaseModel):
                 "declaration_date": date_to_str(self.declaration_date),
                 "check_list": "{}{}{}".format(office_slug, self.check_list.SLUG, self.check_list.id),
                 "scoop": "{}{}{}".format(office_slug, self.scoop.SLUG, self.scoop.id),
-                "start_date": date_to_str(self.start_date),
+                "start_date": datetime_to_str(self.start_date),
                 "status": self.status,
-                "end_date": date_to_str(self.end_date),
+                "end_date": datetime_to_str(self.end_date),
             }
         }
 
