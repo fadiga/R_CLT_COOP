@@ -7,7 +7,7 @@ from PyQt4.QtCore import QThread, SIGNAL, QObject, Qt
 import json
 # import os
 import requests
-from threading import Timer, Thread, Event
+from threading import Event
 # import time
 from configuration import Config
 
@@ -25,25 +25,19 @@ class UpdaterInit(QObject):
         QObject.__init__(self)
 
         if not Config.SERV:
-            print("Not Serveur ")
             return
+        # self.status_bar = QStatusBar()
         self.stopFlag = Event()
         self.check = TaskThreadServer(self)
         self.connect(self.check, SIGNAL('UpdaterInit'),
                      self.update_data, Qt.QueuedConnection)
         self.check.start()
 
-    def end_update_data(self):
-        n = 0
-        while n != 100000:
-            n += 1
-            print("{} Lapin".format(n))
-
     def update_data(self):
-        print("update_data")
+        # print("update_data")
 
         if not internet_on(base_url):
-            print("Pas de d'internet !")
+            # print("Pas de d'internet !")
             return
 
         if Office().select().count() == 0:
@@ -76,6 +70,8 @@ class UpdaterInit(QObject):
             return json.loads(response.content.decode('UTF-8'))
         except ValueError:
             return False
+        except Exception as e:
+            print(e)
 
 
 class TaskThreadServer(QThread):
@@ -86,6 +82,6 @@ class TaskThreadServer(QThread):
         self.stopped = parent.stopFlag
 
     def run(self):
-        print("RUN")
-        while not self.stopped.wait(10):
+        # print("RUN")
+        while not self.stopped.wait(20):
             self.parent.update_data()
