@@ -4,18 +4,27 @@
 # maintainer: Fad
 from __future__ import (
     unicode_literals, absolute_import, division, print_function)
-
-from datetime import datetime
-from PyQt4.QtGui import (QVBoxLayout, QIcon, QTableWidgetItem)
+import os
+# from datetime import datetime
+from PyQt4.QtGui import (QVBoxLayout)
+try:
+    from PyQt4.QtWebKit import QWebView
+except:
+    pass
+# from PyQt4.QtCore import QUrl
+from jinja2 import Environment, FileSystemLoader
 
 from Common.tabpane import tabbox
-from Common.ui.common import FWidget, FPageTitle, FBoxTitle, LineEdit
-from Common.ui.table import FTableWidget
-from Common.ui.util import (show_date, formatted_number,
-                            date_on_or_end)
+from Common.ui.common import FWidget, FPageTitle, FBoxTitle
+# from Common.ui.table import FTableWidget
+# from Common.ui.util import (show_date, formatted_number, date_on_or_end)
 
-# from models import Invoice, Reports
-from configuration import Config
+from models import CooperativeCompanie
+# from configuration import Config
+
+
+ROOT_DIR = os.path.dirname(os.path.abspath('__file__'))
+# BASE_URL = 'file://' + ROOT_DIR
 
 
 class DashbordViewWidget(FWidget):
@@ -30,61 +39,42 @@ class DashbordViewWidget(FWidget):
 
         self.parent = parent
         vbox = QVBoxLayout()
-        table_invoice = QVBoxLayout()
-        table_alert = QVBoxLayout()
-        table_mouvement = QVBoxLayout()
-
-        self.search_field = LineEdit()
-        self.search_field.setToolTip("Rechercher un produit")
-        self.search_field.setMaximumSize(
-            500, self.search_field.maximumSize().height())
-        self.search_field.textChanged.connect(self.finder)
 
         self.title = FPageTitle("TABLEAU DE BORD")
 
-        self.title_alert = FBoxTitle(u"Les alertes ")
-        self.table_alert = AlertTableWidget(parent=self)
-        # table_alert.addWidget(self.title_alert)
-        table_alert.addWidget(self.table_alert)
+        self.title_alert = FBoxTitle(u"Les alertes")
+        jinja = Environment(loader=FileSystemLoader('static'))
+        template = jinja.get_template('chart.html')
 
-        # table_invoice.addWidget(self.title_invoice)
-        # table_mouvement.addWidget(self.title_mouvement)
-        # table_mouvement.addWidget(self.table_mouvement)
-        tab_widget = tabbox((table_alert, u"Alerte"))
+        cc_list = CooperativeCompanie.select().order_by('-start_date')
+        dataset = {
+            "toal_scoop": cc_list.count(),
+            "sc_coop_ca": cc_list.where(CooperativeCompanie.forme == "b").count(),
+            "sc_scoops": cc_list.where(CooperativeCompanie.forme == "a").count(),
+            "union": cc_list.where(CooperativeCompanie.forme == "bv").count(),
+            "federation": cc_list.where(CooperativeCompanie.forme == "bf").count(),
+            "confederation": cc_list.where(CooperativeCompanie.forme == "bc").count(),
+        }
+
+        graph1 = template.render(base_url=ROOT_DIR, data=dataset)
+
+        template2 = jinja.get_template('table.html')
+        table_html = template2.render(base_url=ROOT_DIR, dataset=dataset)
+
+        web_graphic = QWebView()
+        web_graphic.setHtml(graph1)
+        tab_graphic = QVBoxLayout()
+        tab_graphic.addWidget(web_graphic)
+
+        web_table = QWebView()
+        web_table.setHtml(table_html)
+        tab_table = QVBoxLayout()
+        tab_table.addWidget(web_table)
+
+        tab_widget = tabbox((tab_graphic, u"Graphique"))
+        tab_widget1 = tabbox((tab_table, u"Tableau"))
 
         vbox.addWidget(self.title)
         vbox.addWidget(tab_widget)
+        vbox.addWidget(tab_widget1)
         self.setLayout(vbox)
-
-    def finder(self):
-        self.table_invoice.refresh_(str(self.search_field.text()))
-
-
-class AlertTableWidget(FTableWidget):
-
-    def __init__(self, parent, *args, **kwargs):
-        FTableWidget.__init__(self, parent=parent, *args, **kwargs)
-
-        self.hheaders = [u"Magasin", "Produits", u"Quantité restante",
-                         u"Date de la dernière operation"]
-
-        self.stretch_columns = [0, 1, 2, 3]
-        self.align_map = {0: 'l', 1: 'l', 2: 'l', 3: 'r'}
-        self.display_vheaders = False
-        self.live_refresh = True
-        # self.sorter = True
-        self.refresh_()
-
-    def refresh_(self):
-        """ """
-        self._reset()
-        self.set_data_for()
-        self.refresh()
-        pw = self.width() / 5
-        self.setColumnWidth(0, pw)
-        self.setColumnWidth(1, pw)
-        self.setColumnWidth(2, pw)
-
-    def set_data_for(self):
-        # reports = lastes_upper_of(10)
-        self.data = []

@@ -12,7 +12,7 @@ from peewee import (DateTimeField, DateField, CharField,
                     IntegerField, BooleanField, ForeignKeyField)
 from data_helper import (get_entity_name, get_postes, get_formes, get_qualities,
                          get_activities, get_spinneret_activites)
-from configuration import Config
+
 from Common.ui.util import date_to_str, datetime_to_str
 from Common.models import BaseModel
 
@@ -45,7 +45,7 @@ class Office(BaseModel):
             self.slug, self.region_name(), self.cercle_name())
 
     def data(self):
-
+        from configuration import Config
         import platform
         return {
             "model": "Office",

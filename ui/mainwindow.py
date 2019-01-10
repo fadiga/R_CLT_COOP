@@ -4,10 +4,6 @@
 from __future__ import (unicode_literals, absolute_import, division,
                         print_function)
 
-import os
-import sys
-
-sys.path.append(os.path.abspath('../'))
 from PyQt4.QtGui import QIcon
 from PyQt4.QtCore import Qt
 
@@ -32,7 +28,6 @@ class MainWindow(FMainWindow):
         self.setMenuBar(self.menubar)
         self.toolbar = MenuToolBar(self)
         self.addToolBar(Qt.LeftToolBarArea, self.toolbar)
-
         self.change_context(DashbordViewWidget)
 
     def page_width(self):

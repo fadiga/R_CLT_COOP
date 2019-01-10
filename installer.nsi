@@ -6,7 +6,7 @@
 
   !define MUI_PRODUCT "R_coop_desktop"
   !define MUI_FILE "main"
-  !define MUI_VERSION "1.1"
+  !define MUI_VERSION "1.2"
   !define MUI_BRANDINGTEXT "${MUI_PRODUCT} ${MUI_VERSION}"
   !define IMAGES "img"
   !define CIMAGES "cimages"
@@ -50,7 +50,7 @@ Section "install"
 
   ;List of files/folders to copy
   File /r dist\*.*
-  File /r ${IMAGES}
+  File /r ${MEDIA}
   File /r ${CIMAGES_PATH}
   File "rep_fixtures.json"
   File ${SOURCE}
@@ -88,6 +88,7 @@ delete $INSTDIR\*.dll
 delete $INSTDIR\*.lib
 delete $INSTDIR\*.zip
 delete $INSTDIR\*.pdf
+delete $INSTDIR\*.json
 delete $INSTDIR\*.pyd
 
 RMDir /r $INSTDIR\build

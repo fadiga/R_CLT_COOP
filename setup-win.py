@@ -6,6 +6,7 @@ import os
 import sys
 import py2exe
 
+# sys.setrecursionlimit(5000)
 sys.path.append(os.path.abspath('../'))
 
 from configuration import Config
@@ -107,11 +108,11 @@ main_app = Target(
 
 py2exe_options = dict(
     packages=['reportlab', 'reportlab.pdfgen', ],
-    includes=['sip', 'PyQt4'],
-    excludes=['tkinter', 'toFspecials'],
-    optimize=2,
+    includes=['sip', 'PyQt4', 'PyQt4.QtNetwork', ],
+    excludes=['tkinter', 'toFspecials', 'jinja2.asyncsupport', ],
+    optimize=1,
     compressed=True,  # uncompressed may or may not have a faster startup
-    bundle_files=1,
+    bundle_files=2,
     dist_dir='dist',
 )
 

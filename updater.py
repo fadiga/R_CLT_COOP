@@ -54,8 +54,8 @@ class UpdaterInit(QObject):
             for m in model.all():
                 if not m.is_syncro:
                     print(m.data())
-                    resp = self.sender("update-data", m.data())
-                    # print(resp)
+                    resp = self.sender("update_data", m.data())
+                    print("resp : ", resp)
                     if resp.get("save"):
                         m.updated()
 
@@ -63,13 +63,14 @@ class UpdaterInit(QObject):
 
     def sender(self, url, data):
         client = requests.session()
-        url = base_url + "scoop/" + url
-        response = client.get(url, data=json.dumps(data))
-        # print("response : ", response)
+        url_ = base_url + "scoop/" + url
+        print(url_, json.dumps(data))
+        response = client.get(url_, data=json.dumps(data))
+        print("response : ", response)
         try:
             return json.loads(response.content.decode('UTF-8'))
-        except ValueError:
-            return False
+        except ValueError as e:
+            return {"save": False, "msg_error": e}
         except Exception as e:
             print(e)
 
@@ -82,6 +83,7 @@ class TaskThreadServer(QThread):
         self.stopped = parent.stopFlag
 
     def run(self):
-        # print("RUN")
+        print("RUN")
         while not self.stopped.wait(20):
+            print("RUN after 20")
             self.parent.update_data()

@@ -9,26 +9,26 @@ from __future__ import (
 import os
 import sys
 
-sys.path.append(os.path.abspath('../'))
-
 from PyQt4.QtGui import QApplication
 
+sys.path.append(os.path.abspath('../'))
+
+from migrations import make_migrate
 from Common.ui.window import FWindow
 from Common.cmain import cmain
 from Common.ui.qss import theme
 
-from migrations import make_migrate
-from ui.mainwindow import MainWindow
-
 app = QApplication(sys.argv)
+
+from ui.mainwindow import MainWindow
 
 
 def main():
     window = MainWindow()
     window.setStyleSheet(theme)
-    setattr(FWindow, 'window', window)
-    # window.show()
-    window.showMaximized()
+    # setattr(FWindow, 'window', window)
+    window.show()
+    # window.showMaximized()
     sys.exit(app.exec_())
 
 if __name__ == '__main__':

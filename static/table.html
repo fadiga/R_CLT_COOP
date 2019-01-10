@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block body %}
+    <div class="row">
+      <div class="col-xs-6 col-md-6">
+        <table class="table table-sm table-bordered">
+            <tr><th>Total CS </th><td class="text-right">{{dataset.toal_scoop}}</td></tr>
+            <tr><th>Total CS COOP-CA</th><td class="text-right">{{dataset.sc_coop_ca}}</td></tr><tr>
+            <tr><th>Total CS COOPS</th><td class="text-right">{{dataset.sc_scoops}}</td></tr><tr>
+            <tr><th>Total CS UNION</th><td class="text-right">{{dataset.union}}</td></tr>
+            <tr><th>Total CS Fédération</th><td class="text-right">{{dataset.federation}}</td></tr>
+            <tr><th>Total CS Confédération</th><td class="text-right">{{dataset.confederation}}</td></tr>
+        </table>
+      </div>
+      <div class="col-xs-6 col-md-6">
+        <table class="table table-sm table-bordered">
+            {% for cc in data %}
+            <tr>
+              <th>Donomination: </th>
+              <td>{{cc.denomination}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+      </div>
+    </div>
+
+{% endblock %}
