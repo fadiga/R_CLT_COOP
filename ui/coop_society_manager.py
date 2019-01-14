@@ -199,6 +199,6 @@ class MemberTableWidget(FTableWidget):
     def click_item(self, row, column, *args):
         self.choix = CooperativeMember.filter(id=self.data[row][-1]).get()
         if column != 2:
-            self.parent.open_dialog(
+            self.parent.parent.open_dialog(
                 EditOrAddMemberDialog, modal=True, scoop=self.dmd.scoop,
-                member=self.choix, table_p=self.parent.member_table)
+                member=self.choix, table_p=self.parent.table)
