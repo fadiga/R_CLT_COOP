@@ -6,7 +6,7 @@
 
   !define MUI_PRODUCT "R_coop_desktop"
   !define MUI_FILE "main"
-  !define MUI_VERSION "1.2"
+  !define MUI_VERSION "0.3-beta"
   !define MUI_BRANDINGTEXT "${MUI_PRODUCT} ${MUI_VERSION}"
   !define IMAGES "img"
   !define CIMAGES "cimages"

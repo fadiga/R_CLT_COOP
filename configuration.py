@@ -36,7 +36,7 @@ class Config(CConstants):
     IBS_LOGO = os.path.join(img_media, "ibs.jpg")
     APP_LOGO_ICO = os.path.join(img_media, "logo.ico")
 
-    BASE_URL = "http://192.168.6.6:9009/"
+    BASE_URL = "http://192.168.6.7:9009/"
     # BASE_URL = "https://msah.ml/"
     SERV = True
     EXCLUDE_MENU_ADMIN = ["del_all", "theme"]

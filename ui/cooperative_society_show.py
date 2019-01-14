@@ -50,7 +50,6 @@ class CooperativeSocietyDialog(QDialog, FWidget):
             "<strong> 6.3 Montant apports en industrie : </strong> {}".format(self.scoop.apports_industrie)))
         self.capitalSGroupBox = QGroupBox("6. Capital Social Initial")
         self.capitalSGroupBox.setLayout(capital_formbox)
-        self.capitalSGroupBox.setMaximumWidth(1200)
         # Adresse du siège social
         addres_gribox = QGridLayout()
         addres_gribox.addWidget(
@@ -72,32 +71,32 @@ class CooperativeSocietyDialog(QDialog, FWidget):
 
         duree_fbox = QFormLayout()
         duree_fbox.addRow(FLabel(
-            u"8. Durée statutaire de la société coopérative:".format(self.scoop.duree_statutaire)))
+            u"8. Durée statutaire de la société coopérative: {}".format(self.scoop.duree_statutaire)))
 
         members_fbox = QFormLayout()
         rows = ""
-        for i in self.scoop.membres():
+        for e, i in enumerate(self.scoop.membres()):
             rows += """
-                <tr style='background-color: #fff;text-align: left;'>
-                    <td > {}</td><td> {}</td><td> {}</td><td> {}</td><td> {}</td><td> {}</td><td> {}</td>
+                <tr>
+                    <td>{}</td><td style='margin:15px'> {}</td><td> {}</td><td> {}</td><td> {}</td><td> {}</td><td> {}</td><td> {}</td>
                 </tr>
-                """.format(
-                i.full_name, i.display_sex(), i.ddn, i.addres, i.nationality, i.phone, i.display_poste())
+                """.format(e + 1,
+                           i.full_name, i.display_sex(), i.ddn, i.addres, i.nationality, i.phone, i.display_poste())
 
         members_fbox.addRow(FHeader("""
-                <table>
+                <table style="background-color:#fff,border:2px solid #000">
                 <tr style='background-color:green;color:#fff;text-align:center;padding:15px;margin:20px'>
-                <th>Nom</th><th>sexe</th><th>Date de naissance</th><th>Adresse</th><th>Nationalie</th><th>Tel</th><th>Porte</th>
+                <th>N°</th><th>Nom</th><th>sexe</th><th>Date de naissance</th><th>Adresse</th><th>Nationalie</th><th>Tel</th><th>Porte</th>
                 </tr>
                 {}
                 </table>
-        """.format(rows), ""))
+        """.format(rows), "color: blue;background-color: #fff;"))
         self.addresGroupBox = QGroupBox("7. Adresse du siège social")
         self.addresGroupBox.setLayout(addres_gribox)
         self.membersGroupBox = QGroupBox("Les membres de la coopérative")
         self.membersGroupBox.setLayout(members_fbox)
         vbox = QVBoxLayout()
-        vbox.addWidget(FHeader("", "background-color: green; color:#fff"))
+        # vbox.addWidget(FHeader("", "background-color: green; color:#fff"))
         vbox.addLayout(formbox)
         vbox.addWidget(self.capitalSGroupBox)
         vbox.addWidget(self.addresGroupBox)

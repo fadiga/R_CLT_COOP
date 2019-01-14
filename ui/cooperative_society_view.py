@@ -70,14 +70,14 @@ class MemberTableWidget(FTableWidget):
         self.setStyleSheet(
             "QHeaderView::section { background-color:green; color:#fff;text-transform: uppercase;font:bold}")
         self.parent = parent
-        # self.sorter = True
+        self.sorter = True
         self.stretch_columns = [0, 1, 2, 3, 4, 5]
         self.align_map = {0: 'l', 1: 'l', 2: 'r', 3: 'r', 4: 'r'}
-        self.display_vheaders = False
+        # self.display_vheaders = False
         self.hheaders = [
             "Immatricule", "Dénomination Sociale de la société coopérative",
             "Nom Commercial / Sigle / Enseigne",
-            "Activités exercées", "Filière", "Forme de la société coopérative", "", ""]
+            "Activités exercées", "Filière", "Forme de la société coopérative", "Editer", "Voir", ""]
         self.refresh_()
 
     def refresh_(self):
@@ -95,7 +95,7 @@ class MemberTableWidget(FTableWidget):
             CooperativeCompanie.start_date.asc())
         self.data = [(coopc.immatricule, coopc.denomination, coopc.commercial_name,
                       coopc.display_activity(), coopc.display_spinneret(),
-                      coopc.display_forme(), coopc.id) for coopc in self.qs]
+                      coopc.display_forme(), "", coopc.id) for coopc in self.qs]
 
         if len(self.data) != 0:
             self.parent.btt_xlsx_export.setEnabled(True)
@@ -105,9 +105,12 @@ class MemberTableWidget(FTableWidget):
         #     return QTableWidgetItem(QIcon(
         # u"{}find.png".format(Config.img_cmedia)),
         # "{}".format(self.data[0][0]))
+        if column == len(self.data[0]) - 2:
+            return QTableWidgetItem(QIcon(
+                u"{}edit.png".format(Config.img_cmedia)), "")
         if column == len(self.data[0]) - 1:
             return QTableWidgetItem(QIcon(
-                u"{}find.png".format(Config.img_cmedia)), "Voir")
+                u"{}find.png".format(Config.img_cmedia)), "")
         return super(MemberTableWidget, self)._item_for_data(row, column,
                                                              data, context)
 
@@ -118,8 +121,12 @@ class MemberTableWidget(FTableWidget):
             pdf_file = pdf_maker(
                 "Immatricule", Demande.filter(scoop=self.choix).get())
             uopen_file(pdf_file)
+        if column == len(self.data[0]) - 2:
+            from ui.coop_society_manager import CoopSocietyManager
+            self.parent.change_main_context(
+                CoopSocietyManager, scoop=self.choix)
         if column == len(self.data[0]) - 1:
-            from ui.cooperative_socuety_show import CooperativeSocietyDialog
+            from ui.cooperative_society_show import CooperativeSocietyDialog
             self.parent.open_dialog(
                 CooperativeSocietyDialog, modal=True, scoop=self.choix)
 
