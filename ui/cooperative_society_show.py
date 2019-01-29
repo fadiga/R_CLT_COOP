@@ -68,11 +68,9 @@ class CooperativeSocietyDialog(QDialog, FWidget):
         addres_gribox.addWidget(FLabel("BP : {}".format(self.scoop.bp)), 3, 1)
         addres_gribox.addWidget(
             FLabel("E-mail : {}".format(self.scoop.email)), 3, 2)
-
         duree_fbox = QFormLayout()
         duree_fbox.addRow(FLabel(
             u"8. Durée statutaire de la société coopérative: {}".format(self.scoop.duree_statutaire)))
-
         members_fbox = QFormLayout()
         rows = ""
         for e, i in enumerate(self.scoop.membres()):
@@ -80,8 +78,7 @@ class CooperativeSocietyDialog(QDialog, FWidget):
                 <tr>
                     <td>{}</td><td style='margin:15px'> {}</td><td> {}</td><td> {}</td><td> {}</td><td> {}</td><td> {}</td><td> {}</td>
                 </tr>
-                """.format(e + 1,
-                           i.full_name, i.display_sex(), i.ddn, i.addres, i.nationality, i.phone, i.display_poste())
+                """.format(e + 1, i.full_name, i.display_sex(), i.ddn, i.addres, i.nationality, i.phone, i.display_poste())
 
         members_fbox.addRow(FHeader("""
                 <table style="background-color:#fff,border:2px solid #000">

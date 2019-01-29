@@ -112,7 +112,7 @@ py2exe_options = dict(
     excludes=['tkinter', 'toFspecials', 'jinja2.asyncsupport', ],
     optimize=1,
     compressed=True,  # uncompressed may or may not have a faster startup
-    bundle_files=2,
+    bundle_files=1,
     dist_dir='dist',
 )
 
