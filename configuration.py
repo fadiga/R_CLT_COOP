@@ -30,13 +30,17 @@ class Config(CConstants):
     APP_NAME = "R_coop_desktop"
     APP_VERSION = 1
     APP_DATE = u"10/2018"
+
+    ARMOIRE = "img_prod"
+
+    des_image_record = os.path.join(ROOT_DIR, ARMOIRE)
     templates = os.path.join(ROOT_DIR, "templates")
     img_media = os.path.join(os.path.join(ROOT_DIR, "static"), "img/")
     APP_LOGO = os.path.join(img_media, "logo.png")
     IBS_LOGO = os.path.join(img_media, "ibs.jpg")
     APP_LOGO_ICO = os.path.join(img_media, "logo.ico")
 
-    BASE_URL = "http://192.168.6.7:9009/"
+    BASE_URL = "http://192.168.6.6:9009/"
     # BASE_URL = "https://msah.ml/"
     SERV = True
     EXCLUDE_MENU_ADMIN = ["del_all", "theme"]
