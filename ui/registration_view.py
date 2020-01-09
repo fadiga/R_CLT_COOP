@@ -8,11 +8,13 @@ from __future__ import (
 from PyQt4.QtCore import QDate
 from PyQt4.QtGui import (
     QVBoxLayout, QGridLayout, QFormLayout, QFrame, QComboBox, QGroupBox)
+
+from constants import *
+
 from Common.ui.common import (ExtendedComboBox, FWidget, FormatDate, LineEdit,
                               Button_save, FLabel, FRLabel, IntLineEdit)
-from Common.ui.util import device_amount, check_is_empty, is_int
-from models import (Demande, CooperativeCompanie, Office,
-                    CheckList)
+from Common.ui.util import device_amount, check_is_empty, is_int, field_error
+from models import (Demande, CooperativeCompanie, Office)
 from data_helper import (entity_children, get_formes, get_spinneret_activites,
                          get_activities)
 from ui.registration_manager import ResgistrationManagerWidget
@@ -26,23 +28,29 @@ class RegistrationViewWidget(FWidget):
         super(RegistrationViewWidget, self).__init__(
             parent=parent, *args, **kwargs)
         self.parent = parent
+
         self.parentWidget().set_window_title("FORMULAIRE D’IMMATRICULATION")
         self.title = FLabel("<h3>FORMULAIRE D’IMMATRICULATION</h3>")
         self.office = Office.select().where(Office.id == 1).get()
-        self.created_year_field = IntLineEdit()
-        self.created_year_field.setInputMask('####')
+        self.created_date_field = FormatDate(QDate.currentDate())
+        self.created_date_field.setMaximumWidth(130)
+        # self.created_date_field.setInputMask('####')
         self.duree_statutaire_field = IntLineEdit()
+        self.duree_statutaire_field.setMaximumWidth(80)
         self.rue_field = IntLineEdit()
         self.porte_field = IntLineEdit()
         self.tel_field = IntLineEdit()
         self.tel_field.setInputMask('## ## ## ##')
+        self.tel2_field = IntLineEdit()
+        self.tel2_field.setInputMask('## ## ## ##')
         self.bp_field = IntLineEdit()
         self.email_field = LineEdit()
         self.denomination_field = LineEdit()
         self.commercial_name_field = LineEdit()
         self.declaration_date_field = FormatDate(QDate.currentDate())
         self.declaration_date_field.setMaximumWidth(130)
-        self.total_amount = FLabel()
+        self.amount_capital_social_initial = FLabel()
+        self.amount_part_social_field = IntLineEdit()
         self.apports_numeraire_field = IntLineEdit()
         self.apports_numeraire_field.textChanged.connect(self.cal_total)
         self.apports_nature_field = IntLineEdit()
@@ -51,10 +59,10 @@ class RegistrationViewWidget(FWidget):
         self.apports_industrie_field.textChanged.connect(self.cal_total)
 
         self.spinneret_box = QComboBox()
-        self.spinneret_box.setMaximumWidth(350)
+        self.spinneret_box.setMaximumWidth(800)
 
         self.activites_box = QComboBox()
-        self.activites_box.setMaximumWidth(350)
+        self.activites_box.setMaximumWidth(800)
         self.activites_box.currentIndexChanged.connect(self.sp_change_select)
         self.activities_list = get_activities()
         for index, value in enumerate(self.activities_list):
@@ -64,7 +72,7 @@ class RegistrationViewWidget(FWidget):
             #     self.box_store.setCurrentIndex(index)
 
         self.formes_box = QComboBox()
-        self.formes_box.setMaximumWidth(350)
+        self.formes_box.setMaximumWidth(800)
         self.formes_list = get_formes()
         for index, value in enumerate(self.formes_list):
             self.formes_box.addItem(
@@ -88,67 +96,60 @@ class RegistrationViewWidget(FWidget):
         self.vfq_box.setToolTip("vfq")
 
         formbox = QFormLayout()
-        formbox.addRow(FLabel(
-            u"Date de la demande :"), self.declaration_date_field)
-        formbox.addRow(FLabel(
-            u"1. Dénomination Sociale de la société coopérative :"), self.denomination_field)
-        formbox.addRow(FLabel(
-            u"2. Nom Commercial / Sigle / Enseigne :"), self.commercial_name_field)
-        formbox.addRow(FLabel(
-            u"3. Année de création de la société coopérative :"), self.created_year_field)
-        formbox.addRow(FLabel(
-            u"4. Activités exercées :"), self.activites_box)
-        formbox.addRow(FLabel(
-            u"4. Filière :"), self.spinneret_box)
-        formbox.addRow(FLabel(
-            u"5. Forme de la société coopérative :"), self.formes_box)
+        formbox.addRow(FLabel(DATE_DEMANTE), self.declaration_date_field)
+        formbox.addRow(FLabel("1. " + DENOMINATION_S_SC), self.denomination_field)
+        formbox.addRow(FLabel("2. " + NOM_COMMERCIAL), self.commercial_name_field)
+        formbox.addRow(FLabel("3. " + DATE_CREATION_SC), self.created_date_field)
+        formbox.addRow(FLabel("4. " + ACTIVITES_E), self.activites_box)
+        formbox.addRow(FLabel("5. " + FILIERE), self.spinneret_box)
+        formbox.addRow(FLabel("6. " + FORME_SC), self.formes_box)
         # Capital Social Initial
         capital_formbox = QFormLayout()
-        capital_formbox.addRow(FLabel("Montant total :"), self.total_amount)
-        capital_formbox.addRow(FLabel(
-            "6.1 Montant apports en numéraire :"), self.apports_numeraire_field)
-        capital_formbox.addRow(FLabel(
-            "6.2 Montant apports en nature :"), self.apports_nature_field)
-        capital_formbox.addRow(FLabel(
-            "6.3 Montant apports en industrie :"), self.apports_industrie_field)
-        self.capitalSGroupBox = QGroupBox("6. Capital Social Initial")
+        capital_formbox.addRow(FLabel("7.1. " + MONTANT_PART_S), self.amount_part_social_field)
+        capital_formbox.addRow(FLabel("7.2. " + MONTANT_APPORTS_NUM), self.apports_numeraire_field)
+        capital_formbox.addRow(FLabel("7.3. " + MONTANT_APPORTS_NAT), self.apports_nature_field)
+        capital_formbox.addRow(FLabel("7.4. " + MONTANT_APPORTS_INDU), self.apports_industrie_field)
+        self.capitalSGroupBox = QGroupBox("7. " + MONTANT_CAPITAL_SI)
         self.capitalSGroupBox.setLayout(capital_formbox)
-        self.capitalSGroupBox.setMaximumWidth(1300)
+        self.capitalSGroupBox.setStyleSheet(CSS)
+        # self.capitalSGroupBox.setMaximumWidth(1300)
         # Adresse du siège social
 
         self.vline = QFrame()
         self.vline.setFrameShape(QFrame.VLine)
         self.vline.setFrameShadow(QFrame.Sunken)
 
-        self.addresGroupBox = QGroupBox("7. Adresse du siège social")
+        self.addresGroupBox = QGroupBox("8. " + ADRESSE_SS)
+        self.addresGroupBox.setStyleSheet(CSS)
         addres_gribox = QGridLayout()
-        addres_gribox.addWidget(FRLabel("Cercle :"), 0, 0)
+        addres_gribox.addWidget(FRLabel(CERCLE), 0, 0)
         addres_gribox.addWidget(FLabel(self.office.cercle_name()), 0, 1)
-        addres_gribox.addWidget(FRLabel("Commune :"), 1, 0)
+        addres_gribox.addWidget(FRLabel(COMMUNE), 1, 0)
         addres_gribox.addWidget(self.commune_box, 1, 1)
         # addres_gribox.addWidget(self.vline, 0, 3, 2, 5)
-        addres_gribox.addWidget(FRLabel("Village/Fraction/Quartier :"), 2, 0)
+        addres_gribox.addWidget(FRLabel(VFQ), 2, 0)
         addres_gribox.addWidget(self.vfq_box, 2, 1)
-        addres_gribox.addWidget(FRLabel("Rue"), 0, 2)
+        addres_gribox.addWidget(FRLabel(RUE), 0, 2)
         addres_gribox.addWidget(self.rue_field, 0, 3)
-        addres_gribox.addWidget(FRLabel("Porte (n°)"), 1, 2)
+        addres_gribox.addWidget(FRLabel(PORTE), 1, 2)
         addres_gribox.addWidget(self.porte_field, 1, 3)
-        addres_gribox.addWidget(FRLabel("Tel"), 2, 2)
+        addres_gribox.addWidget(FRLabel(TEL), 2, 2)
         addres_gribox.addWidget(self.tel_field, 2, 3)
-        addres_gribox.addWidget(FRLabel("BP"), 0, 4)
+        addres_gribox.addWidget(FRLabel(TEL2), 2, 4)
+        addres_gribox.addWidget(self.tel2_field, 2, 5)
+        addres_gribox.addWidget(FRLabel(BP), 0, 4)
         addres_gribox.addWidget(self.bp_field, 0, 5)
-        addres_gribox.addWidget(FRLabel("E-mail"), 1, 4)
+        addres_gribox.addWidget(FRLabel(EMAIL), 1, 4)
         addres_gribox.addWidget(self.email_field, 1, 5)
         # addres_gribox.setColumnStretch(6, 5)
         self.addresGroupBox.setLayout(addres_gribox)
-        self.addresGroupBox.setMaximumWidth(1300)
+        # self.addresGroupBox.setMaximumWidth(1300)
         # Durée statutaire de la société coopérative
         duree_fbox = QFormLayout()
-        duree_fbox.addRow(FLabel(
-            u"8. Durée statutaire de la société coopérative (ans): "), self.duree_statutaire_field)
-        butt = Button_save(u"Enregistrer")
+        duree_fbox.addRow(FLabel("9. " + DUREE_STATUTAIRE_SC), self.duree_statutaire_field)
+        butt = Button_save(SAVE)
         butt.clicked.connect(self.save_and_goto_manager)
-        butt_and_continous = Button_save(u"Enregistrer et continuer")
+        butt_and_continous = Button_save(SAVE_AND_CONTINNUES)
         butt_and_continous.clicked.connect(self.save_and_goto_add_member)
 
         butt_and_continous.setMaximumWidth(300)
@@ -172,8 +173,8 @@ class RegistrationViewWidget(FWidget):
         self.vfq_box.clear()
         self.vfq_list = self.get_vfq_list()
         for index, value in enumerate(self.vfq_list):
-            self.vfq_box.addItem(
-                "{}".format(self.vfq_list.get(value).upper()), value)
+            self.vfq_box.addItem("{}".format(self.vfq_list.get(
+                value).upper()), value)
 
     def get_spinneret_list(self):
         # c_dic = {}
@@ -186,15 +187,15 @@ class RegistrationViewWidget(FWidget):
         self.spinneret_list = self.get_spinneret_list()
 
         for index, value in enumerate(self.spinneret_list):
-            self.spinneret_box.addItem(
-                "{}".format(self.spinneret_list.get(value).upper()), value)
+            self.spinneret_box.addItem("{}".format(
+                self.spinneret_list.get(value).upper()), value)
 
     def is_valide(self):
         if check_is_empty(self.denomination_field):
             return False
         if check_is_empty(self.commercial_name_field):
             return False
-        if check_is_empty(self.created_year_field):
+        if check_is_empty(self.created_date_field):
             return False
         if check_is_empty(self.denomination_field):
             return False
@@ -210,13 +211,19 @@ class RegistrationViewWidget(FWidget):
         #     return False
         # if check_is_empty(self.porte_field):
         #     return False
-        if check_is_empty(self.tel_field):
+        # print(len(self.tel_field.text()))
+        if len(self.tel_field.text()) != 11:
+            field_error(self.tel_field, "Numéro requis")
             return False
         # if check_is_empty(self.bp_field):
         #     return False
         # if check_is_empty(self.email_field):
         #     return False
         if check_is_empty(self.duree_statutaire_field):
+            return False
+        # print(int(self.duree_statutaire_field.text()))
+        if int(self.duree_statutaire_field.text()) > 100:
+            field_error(self.duree_statutaire_field, "La durée statutaire ne peut être supérieure à 99 ans")
             return False
         return True
 
@@ -225,7 +232,7 @@ class RegistrationViewWidget(FWidget):
             return
         self.scoop = CooperativeCompanie()
         self.scoop.office = self.office
-        self.scoop.created_year = is_int(self.created_year_field.text())
+        self.scoop.created_date = str(self.created_date_field.text())
         self.scoop.denomination = self.denomination_field.text()
         self.scoop.commercial_name = self.commercial_name_field.text()
         self.scoop.activity = self.activites_box.itemData(
@@ -234,6 +241,8 @@ class RegistrationViewWidget(FWidget):
             self.spinneret_box.currentIndex())
         self.scoop.forme = self.formes_box.itemData(
             self.formes_box.currentIndex())
+        self.scoop.amount_part_social = is_int(
+            self.amount_part_social_field.text())
         self.scoop.apports_numeraire = is_int(
             self.apports_numeraire_field.text())
         self.scoop.apports_nature = is_int(self.apports_nature_field.text())
@@ -247,15 +256,16 @@ class RegistrationViewWidget(FWidget):
         self.scoop.rue = is_int(self.rue_field.text())
         self.scoop.porte = is_int(self.porte_field.text())
         self.scoop.tel = is_int(self.tel_field.text())
+        self.scoop.tel2 = is_int(self.tel2_field.text())
         self.scoop.bp = is_int(self.bp_field.text())
         self.scoop.email = self.email_field.text()
         self.scoop.duree_statutaire = is_int(
             self.duree_statutaire_field.text())
         self.scoop.save_()
-        check_list = CheckList()
-        check_list.save_()
+        # check_list = CheckList()
+        # check_list.save_()
         self.dmd = Demande()
-        self.dmd.check_list = check_list
+        # self.dmd.check_list = check_list
         self.dmd.declaration_date = str(self.declaration_date_field.text())
         self.dmd.scoop = self.scoop
         self.dmd.status = self.dmd.ADDMEMBER
@@ -275,4 +285,4 @@ class RegistrationViewWidget(FWidget):
         total = int(self.apports_numeraire_field.text() or 0) + int(
             self.apports_nature_field.text() or 0) + int(
             self.apports_industrie_field.text() or 0)
-        self.total_amount.setText(device_amount(total))
+        self.capitalSGroupBox.setTitle("7. {} :  {}".format(MONTANT_CAPITAL_SI, device_amount(total)))

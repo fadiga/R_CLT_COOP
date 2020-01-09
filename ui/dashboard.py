@@ -15,7 +15,7 @@ except:
 from jinja2 import Environment, FileSystemLoader
 
 from Common.tabpane import tabbox
-from Common.ui.common import FWidget, FPageTitle, FBoxTitle
+from Common.ui.common import FWidget, FPageTitle, FBoxTitle, FMainWindow
 # from Common.ui.table import FTableWidget
 # from Common.ui.util import (show_date, formatted_number, date_on_or_end)
 
@@ -40,6 +40,9 @@ class DashbordViewWidget(FWidget):
         self.parent = parent
         vbox = QVBoxLayout()
 
+        # self.wc = self.width() - 400
+        # self.hc = self.height() - 150
+        # self.resize(self.wc, self.hc)
         self.title = FPageTitle("TABLEAU DE BORD")
 
         self.title_alert = FBoxTitle(u"Les alertes")
@@ -64,6 +67,7 @@ class DashbordViewWidget(FWidget):
         web_graphic = QWebView()
         web_graphic.setHtml(graph1)
         tab_graphic = QVBoxLayout()
+        # tab_graphic.setMargin(20)
         tab_graphic.addWidget(web_graphic)
 
         web_table = QWebView()
@@ -71,10 +75,10 @@ class DashbordViewWidget(FWidget):
         tab_table = QVBoxLayout()
         tab_table.addWidget(web_table)
 
-        tab_widget = tabbox((tab_graphic, u"Graphique"))
-        tab_widget1 = tabbox((tab_table, u"Tableau"))
+        tab_widget = tabbox((tab_graphic, u"Graphique"), (tab_table, u"Tableau"))
+        # tab_widget1 = tabbox((tab_table, u"Tableau"))
 
         vbox.addWidget(self.title)
         vbox.addWidget(tab_widget)
-        vbox.addWidget(tab_widget1)
+        # vbox.addWidget(tab_widget1)
         self.setLayout(vbox)

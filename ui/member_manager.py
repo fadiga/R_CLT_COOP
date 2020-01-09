@@ -39,7 +39,7 @@ class MemberManagerWidget(FWidget, FPeriodHolder):
 
         self.end_demande_btt = Button("Fin de l'ajout")
         self.end_demande_btt.setMaximumWidth(400)
-        self.end_demande_btt.clicked.connect(self.end_add_member)
+        self.end_demande_btt.clicked.connect(self.goto_immatriculation)
         self.new_demande_btt = Button("Nouveau Membre")
         self.new_demande_btt.setMaximumWidth(400)
         self.new_demande_btt.setIcon(QIcon.fromTheme('save', QIcon(
@@ -60,11 +60,18 @@ class MemberManagerWidget(FWidget, FPeriodHolder):
         vbox.addWidget(self.table)
         self.setLayout(vbox)
 
-    def end_add_member(self):
-        self.dmd.status = self.dmd.CHECKLIST
+    # def end_add_member(self):
+    #     self.dmd.status = self.dmd.CHECKLIST
+    #     self.dmd.save_()
+    #     from ui.check_list_view import CheckListViewWidget
+    #     self.change_main_context(CheckListViewWidget, dmd=self.dmd)
+
+    def goto_immatriculation(self):
+        self.dmd.status = self.dmd.IMMATRICULAITON
         self.dmd.save_()
-        from ui.check_list_view import CheckListViewWidget
-        self.change_main_context(CheckListViewWidget, dmd=self.dmd)
+        from ui.immatriculation import ImmatriculationSCoopViewWidget
+        self.change_main_context(
+            ImmatriculationSCoopViewWidget, dmd=self.dmd)
 
     def add_member(self):
         self.open_dialog(

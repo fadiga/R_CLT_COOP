@@ -6,12 +6,14 @@ from __future__ import (
     unicode_literals, absolute_import, division, print_function)
 
 # from datetime import datetime
+from constants import *
 from PyQt4.QtGui import (QVBoxLayout, QIcon, QTableWidgetItem, QGridLayout)
 
 # from Common.tabpane import tabbox
 from Common.ui.common import FWidget, FPageTitle, BttExportXLSX, LineEdit
 from Common.ui.table import FTableWidget
 from Common.ui.util import (uopen_file)
+
 from models import CooperativeCompanie, Demande
 
 from configuration import Config
@@ -77,7 +79,7 @@ class MemberTableWidget(FTableWidget):
         self.hheaders = [
             "Immatricule", "Dénomination Sociale de la société coopérative",
             "Nom Commercial / Sigle / Enseigne",
-            "Activités exercées", "Filière", "Forme de la société coopérative", "Editer", "Voir", ""]
+            "Activités exercées", "Filière", "Forme de la société coopérative", "Gestion", "Fiche", ""]
         self.refresh_()
 
     def refresh_(self):
@@ -110,13 +112,13 @@ class MemberTableWidget(FTableWidget):
                 u"{}edit.png".format(Config.img_cmedia)), "")
         if column == len(self.data[0]) - 1:
             return QTableWidgetItem(QIcon(
-                u"{}find.png".format(Config.img_cmedia)), "")
+                u"{}pdf.png".format(Config.img_cmedia)), "")
         return super(MemberTableWidget, self)._item_for_data(row, column,
                                                              data, context)
 
     def click_item(self, row, column, *args):
         self.choix = CooperativeCompanie.filter(id=self.data[row][-1]).get()
-        if column == 0:
+        if column == len(self.data[0]) - 1:
             from export_immat_pdf import pdf_maker
             pdf_file = pdf_maker(
                 "Immatricule", Demande.filter(scoop=self.choix).get())
@@ -125,17 +127,17 @@ class MemberTableWidget(FTableWidget):
             from ui.coop_society_manager import CoopSocietyManager
             self.parent.change_main_context(
                 CoopSocietyManager, scoop=self.choix)
-        if column == len(self.data[0]) - 1:
-            from ui.cooperative_society_show import CooperativeSocietyDialog
-            self.parent.open_dialog(
-                CooperativeSocietyDialog, modal=True, scoop=self.choix)
+        # if column == len(self.data[0]) - 1:
+        #     from ui.cooperative_society_show import CooperativeSocietyDialog
+        #     self.parent.open_dialog(
+        #         CooperativeSocietyDialog, modal=True, scoop=self.choix)
 
     def dict_data(self):
         data = [(
             scp.immatricule,
             scp.denomination,
             scp.commercial_name,
-            scp.created_year,
+            scp.created_date,
             scp.display_activity(),
             scp.display_spinneret(),
             scp.display_forme(),

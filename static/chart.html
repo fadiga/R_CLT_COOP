@@ -1,36 +1,31 @@
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<base href="{{ base_url }}" />
-<script type="text/javascript" src="{{ base_url }}/static/js/Chart.min.js"></script>
-
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <base href="{{ base_url }}" />
+    <script type="text/javascript" src="{{ base_url }}/static/js/Chart.min.js"></script>
 </head>
- <canvas id="bar-chart" width="400" height="80"></canvas>
+ <canvas id="bar-chart" width="50%" height="40%"></canvas>
 <script>
-
-// Bar chart
-new Chart(document.getElementById("bar-chart"), {
-    type: 'bar',
-    data: {
-      labels: ["TOTAL", "CS COOP-CA", "CS COOPS", "CS UNION", "CS Fédération", "CS Confédération"],
-      datasets: [
-        {
-          label: "Nombre",
-          backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850", "#c44850"],
-          data: [{{data.toal_scoop}}, {{data.sc_coop_ca}}, {{data.sc_scoops}},
-                 {{data.union}}, {{data.federation}}, {{data.confederation}}],
+    // Bar chart
+    new Chart(document.getElementById("bar-chart"), {
+        type: 'bar',
+        data: {
+            labels: ["TOTAL", "CS COOP-CA", "CS COOPS", "CS UNION", "CS Fédération", "CS Confédération"],
+            datasets: [{
+              label: "Nombre",
+              backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850", "#c44850"],
+              data: [{{data.toal_scoop}}, {{data.sc_coop_ca}}, {{data.sc_scoops}},
+                     {{data.union}}, {{data.federation}}, {{data.confederation}}],
+            }]
+        },
+        options: {
+          legend: { display: false },
+          title: {
+            display: true,
+            text: 'Les sociétes coopératives par forme'
+          }
         }
-      ]
-    },
-    options: {
-      legend: { display: false },
-      title: {
-        display: true,
-        text: 'Les sociétes coopératives par forme'
-      }
-    }
-});
-
+    });
 </script>
 
 </body>

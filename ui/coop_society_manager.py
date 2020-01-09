@@ -8,6 +8,7 @@ from __future__ import (
 from PyQt4.QtGui import (QVBoxLayout, QTableWidgetItem, QIcon,
                          QGroupBox, QFormLayout, QGridLayout)
 
+from constants import *
 from Common.tabpane import tabbox
 from Common.ui.common import (
     FWidget, FLabel, LineEdit, FPageTitle, Button)
@@ -55,57 +56,57 @@ class InfoManageWidget(FWidget):
         self.parent = parent
         formbox = QFormLayout()
         formbox.addRow(FLabel(
-            u"<strong>Date de la demande :</strong> {}".format(self.parent.dmd.declaration_date)))
+            u"<strong>{}</strong> {}".format(DATE_DEMANTE, self.parent.dmd.declaration_date)))
         formbox.addRow(FLabel(
-            u"<strong>1. Dénomination Sociale de la société coopérative :</strong> {}".format(self.parent.scoop.denomination)))
+            u"<strong>1. {} :</strong> {}".format(DENOMINATION_S_SC, self.parent.scoop.denomination)))
         formbox.addRow(FLabel(
-            u"<strong>2. Nom Commercial / Sigle / Enseigne :</strong> {}".format(self.parent.scoop.commercial_name)))
+            u"<strong>2. {} :</strong> {}".format(NOM_COMMERCIAL, self.parent.scoop.commercial_name)))
         formbox.addRow(FLabel(
-            u"<strong>3. Année de création de la société coopérative :</strong> {}".format(self.parent.scoop.created_year)))
+            u"<strong>3. {} :</strong> {}".format(DATE_CREATION_SC, self.parent.scoop.created_date)))
         formbox.addRow(FLabel(
-            u"<strong>4. Activités exercées :</strong> {}".format(self.parent.scoop.activity)))
+            u"<strong>4. {} :</strong> {}".format(ACTIVITES_E, self.parent.scoop.activity)))
         formbox.addRow(FLabel(
-            u"<strong>4. Filière :</strong> {}".format(self.parent.scoop.spinneret)))
+            u"<strong>5. {} :</strong> {}".format(FILIERE, self.parent.scoop.spinneret)))
         formbox.addRow(FLabel(
-            u"<strong>5. Forme de la société coopérative :</strong> {}".format(self.parent.scoop.forme)))
+            u"<strong>6. {} :</strong> {}".format(FORME_SC, self.parent.scoop.forme)))
         # Capital Social Initial
         capital_formbox = QFormLayout()
         capital_formbox.addRow(
-            FLabel("<strong> Montant total : </strong> {}".format(self.parent.scoop.apports_numeraire + self.parent.scoop.apports_nature + self.parent.scoop.apports_industrie)))
+            FLabel("<strong> {} : </strong> {}".format(MONTANT_PART_S, self.parent.scoop.apports_numeraire + self.parent.scoop.apports_nature + self.parent.scoop.apports_industrie)))
         capital_formbox.addRow(FLabel(
-            "<strong> 6.1 Montant apports en numéraire : </strong> {}".format(self.parent.scoop.apports_numeraire)))
+            "<strong> 7.1 {} : </strong> {}".format(MONTANT_APPORTS_NUM, self.parent.scoop.apports_numeraire)))
         capital_formbox.addRow(FLabel(
-            "<strong> 6.2 Montant apports en nature : </strong> {}".format(self.parent.scoop.apports_nature)))
+            "<strong> 7.2 {} : </strong> {}".format(MONTANT_APPORTS_NAT, self.parent.scoop.apports_nature)))
         capital_formbox.addRow(FLabel(
-            "<strong> 6.3 Montant apports en industrie : </strong> {}".format(self.parent.scoop.apports_industrie)))
-        self.capitalSGroupBox = QGroupBox("6. Capital Social Initial")
+            "<strong> 7.3 {} : </strong> {}".format(MONTANT_APPORTS_INDU, self.parent.scoop.apports_industrie)))
+        self.capitalSGroupBox = QGroupBox("7. " + MONTANT_CAPITAL_SI)
         self.capitalSGroupBox.setLayout(capital_formbox)
         # self.capitalSGroupBox.setMaximumWidth(1200)
         # Adresse du siège social
         addres_gribox = QGridLayout()
         addres_gribox.addWidget(
-            FLabel("<strong>Région : </strong>{}".format(self.parent.scoop.display_region())), 0, 0)
+            FLabel("<strong>{} </strong>{}".format(REGION, self.parent.scoop.display_region())), 0, 0)
         addres_gribox.addWidget(
-            FLabel("<strong>Cercle : </strong>{}".format(self.parent.scoop.display_cercle())), 1, 0)
+            FLabel("<strong>{} : </strong>{}".format(CERCLE, self.parent.scoop.display_cercle())), 1, 0)
         # addres_gribox.addWidget(self.vline, 0, 3, 2, 5)
         addres_gribox.addWidget(FLabel(
-            "<strong>Village/Fraction/Quartier : </strong>{}".format(self.parent.scoop.display_commune())), 1, 1)
+            "<strong>{} : </strong>{}".format(VFQ, self.parent.scoop.display_commune())), 1, 1)
         addres_gribox.addWidget(
-            FLabel("<strong>Rue : </strong>{}".format(self.parent.scoop.rue)), 2, 0)
+            FLabel("<strong>{} </strong>{}".format(RUE, self.parent.scoop.rue)), 2, 0)
         addres_gribox.addWidget(
-            FLabel("<strong>Porte (n°) </strong>{}".format(self.parent.scoop.porte)), 2, 1)
+            FLabel("<strong>{} </strong>{}".format(PORTE, self.parent.scoop.porte)), 2, 1)
         addres_gribox.addWidget(
-            FLabel("<strong>Tel : </strong>{}".format(self.parent.scoop.tel)), 3, 0)
+            FLabel("<strong>Tel : </strong>{}".format(TEL, self.parent.scoop.tel)), 3, 0)
         addres_gribox.addWidget(
-            FLabel("<strong>BP : </strong>{}".format(self.parent.scoop.bp)), 3, 1)
+            FLabel("<strong>{} </strong>{}".format(BP, self.parent.scoop.bp)), 3, 1)
         addres_gribox.addWidget(
-            FLabel("<strong>E-mail : </strong>{}".format(self.parent.scoop.email)), 3, 2)
+            FLabel("<strong>{} </strong>{}".format(EMAIL, self.parent.scoop.email)), 3, 2)
 
         duree_fbox = QFormLayout()
         duree_fbox.addRow(FLabel(
-            u"<strong>8. Durée statutaire de la société coopérative: </strong>{}".format(self.parent.scoop.duree_statutaire)))
+            u"<strong>{} </strong>{}".format(DUREE_STATUTAIRE_SC, self.parent.scoop.duree_statutaire)))
 
-        self.addresGroupBox = QGroupBox("7. Adresse du siège social")
+        self.addresGroupBox = QGroupBox(ADRESSE_SS)
         self.addresGroupBox.setLayout(addres_gribox)
         vbox = QVBoxLayout()
         vbox.addLayout(formbox)
