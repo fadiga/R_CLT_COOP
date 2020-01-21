@@ -67,6 +67,7 @@ class MemberManagerWidget(FWidget, FPeriodHolder):
     #     self.change_main_context(CheckListViewWidget, dmd=self.dmd)
 
     def goto_immatriculation(self):
+        # self.dmd.status = self.dmd.CHECKLIST
         self.dmd.status = self.dmd.IMMATRICULAITON
         self.dmd.save_()
         from ui.immatriculation import ImmatriculationSCoopViewWidget

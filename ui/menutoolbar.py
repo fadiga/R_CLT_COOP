@@ -39,14 +39,14 @@ class MenuToolBar(QToolBar, FWidget):
             QIcon(u"{}exit.png".format(Config.img_cmedia)),
             u"Quiter", self.goto_exit)
         menu = [
+            {"name": u"Enregister une Demande", "icon": 'add',
+             "admin": False, "goto": RegistrationViewWidget},
+            {"name": u"Demandes en cours", "icon": 'report',
+             "admin": False, "goto": ResgistrationManagerWidget},
+            {"name": u"Répertoire Coopératives", "icon": 'cooperatives',
+             "admin": False, "goto": CooperativeSocietyViewWidget},
             {"name": u"Tableau de bord", "icon": 'dashboard',
              "admin": False, "goto": DashbordViewWidget},
-            {"name": u"Nouvelle Demande", "icon": 'add',
-             "admin": False, "goto": RegistrationViewWidget},
-            {"name": u"Gestion demandes", "icon": 'report',
-             "admin": False, "goto": ResgistrationManagerWidget},
-            {"name": u"Coopératives", "icon": 'cooperatives',
-             "admin": False, "goto": CooperativeSocietyViewWidget},
         ]
         # self.addSeparator()
         for m in menu:

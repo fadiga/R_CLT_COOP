@@ -14,7 +14,7 @@ from constants import *
 from Common.ui.common import (ExtendedComboBox, FWidget, FormatDate, LineEdit,
                               Button_save, FLabel, FRLabel, IntLineEdit)
 from Common.ui.util import device_amount, check_is_empty, is_int, field_error
-from models import (Demande, CooperativeCompanie, Office)
+from models import (Demande, CooperativeCompanie, Office, CheckList)
 from data_helper import (entity_children, get_formes, get_spinneret_activites,
                          get_activities)
 from ui.registration_manager import ResgistrationManagerWidget
@@ -34,7 +34,7 @@ class RegistrationViewWidget(FWidget):
         self.office = Office.select().where(Office.id == 1).get()
         self.created_date_field = FormatDate(QDate.currentDate())
         self.created_date_field.setMaximumWidth(130)
-        # self.created_date_field.setInputMask('####')
+        # self.created_date_field.setInputMask('##/##/####')
         self.duree_statutaire_field = IntLineEdit()
         self.duree_statutaire_field.setMaximumWidth(80)
         self.rue_field = IntLineEdit()
@@ -87,7 +87,7 @@ class RegistrationViewWidget(FWidget):
         self.commune_box.setToolTip("commune")
         self.commune_box.currentIndexChanged.connect(self.c_change_select)
 
-        self.vfq_list = self.get_vfq_list()
+        # self.vfq_list = self.get_vfq_list()
         self.vfq_box = ExtendedComboBox()
         self.vfq_list = self.get_vfq_list()
         for index, value in enumerate(self.vfq_list):
@@ -262,10 +262,10 @@ class RegistrationViewWidget(FWidget):
         self.scoop.duree_statutaire = is_int(
             self.duree_statutaire_field.text())
         self.scoop.save_()
-        # check_list = CheckList()
-        # check_list.save_()
+        check_list = CheckList()
+        check_list.save_()
         self.dmd = Demande()
-        # self.dmd.check_list = check_list
+        self.dmd.check_list = check_list
         self.dmd.declaration_date = str(self.declaration_date_field.text())
         self.dmd.scoop = self.scoop
         self.dmd.status = self.dmd.ADDMEMBER

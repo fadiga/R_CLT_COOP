@@ -41,6 +41,10 @@ class Config(CConstants):
     APP_LOGO_ICO = os.path.join(img_media, "logo.ico")
 
     BASE_URL = "http://192.168.6.6:9009/"
-    # BASE_URL = "https://msah.ml/"
+    # BASE_URL = "https://dnds.ml/"
     SERV = True
-    EXCLUDE_MENU_ADMIN = ["del_all", "theme"]
+    EXCLUDE_MENU_ADMIN = []
+    from models import (CheckList, CooperativeCompanie, Immatriculation,
+                        Demande, CooperativeMember, Office)
+    list_models = [Immatriculation, CooperativeMember, CooperativeCompanie,
+                   Demande, CheckList, Office]

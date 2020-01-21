@@ -4,10 +4,12 @@ def make_migrate():
 
     from playhouse.migrate import migrate, CharField, FloatField, IntegerField
 
+    # migrations = [('Immatriculation', 'typ_imm', CharField(default="R"))]
     migrations = []
-    for elt in migrations:
-        print("MIGRATION : ", elt)
+
+    for x, y, z in migrations:
         try:
-            migrate(elt)
-        except Exception as e:
-            print(e)
+            migrate(migrator.add_column(x, y, z))
+            print(x, " : ", y)
+        except:
+            pass

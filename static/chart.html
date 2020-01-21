@@ -4,26 +4,38 @@
     <base href="{{ base_url }}" />
     <script type="text/javascript" src="{{ base_url }}/static/js/Chart.min.js"></script>
 </head>
- <canvas id="bar-chart" width="50%" height="40%"></canvas>
+<h2>Répartition des sociétes coopératives par forme</h2>
+ <canvas id="bar-chart" width="{{data.wc}}" height="{{data.hc}}"></canvas>
 <script>
     // Bar chart
     new Chart(document.getElementById("bar-chart"), {
         type: 'bar',
         data: {
-            labels: ["TOTAL", "CS COOP-CA", "CS COOPS", "CS UNION", "CS Fédération", "CS Confédération"],
+            labels: ["TOTAL", "COOP-CA", "COOPS", "UNION", "Fédération", "Confédération"],
             datasets: [{
-              label: "Nombre",
-              backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850", "#c44850"],
-              data: [{{data.toal_scoop}}, {{data.sc_coop_ca}}, {{data.sc_scoops}},
-                     {{data.union}}, {{data.federation}}, {{data.confederation}}],
+                label: "Nombre de sociétes coopératives",
+                backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850", "#c44850"],
+                data: [
+                    {{data.toal_scoop}}, {{data.sc_coop_ca}}, {{data.sc_scoops}},
+                    {{data.union}}, {{data.federation}}, {{data.confederation}}
+                ],
             }]
         },
         options: {
-          legend: { display: false },
+          legend: { display: true },
           title: {
             display: true,
-            text: 'Les sociétes coopératives par forme'
-          }
+            // text: 'Les sociétes coopératives par forme'
+          },
+          maintainAspectRatio: true,
+          responsive: true,
+            scales: {
+              yAxes: [{
+                ticks: {
+                  beginAtZero: true,
+                }
+              }]
+            }
         }
     });
 </script>

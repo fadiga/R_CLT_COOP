@@ -46,6 +46,12 @@ class ImmatriculationSCoopViewWidget(FWidget):
             self.quality_box.addItem(
                 "{}".format(self.qualities_list.get(value).upper()), value)
 
+        self.type_box = QComboBox()
+        self.type_box.setMaximumWidth(600)
+        self.type_lists = Immatriculation.TYPES
+        for index, value in enumerate(self.type_lists):
+            print(value)
+            self.type_box.addItem("{}".format(value[1], index))
         self.tel_declarant_field = IntLineEdit()
         self.tel_declarant_field.setInputMask('## ## ## ##')
         self.tel_declarant_field.setMaximumWidth(600)
@@ -54,18 +60,16 @@ class ImmatriculationSCoopViewWidget(FWidget):
         self.btn.clicked.connect(self.save)
 
         declarant_formbox = QFormLayout()
-        declarant_formbox.addRow(FLabel(""))
-        declarant_formbox.addRow(FLabel("<strong>Nom et prénom du declarant : </strong>"), self.name_declarant_field)
-        declarant_formbox.addRow(FLabel("<strong>En qualité de : </strong>"), self.quality_box)
-        declarant_formbox.addRow(FLabel("<strong>Procuration : </strong>"), self.procuration_field)
-        declarant_formbox.addRow(FLabel("<strong>Numéro tel. du declarant : </strong>"), self.tel_declarant_field)
+        declarant_formbox.addRow(FLabel("<strong>Type de d'immatriculation *: </strong>"), self.type_box)
+        declarant_formbox.addRow(FLabel("<strong>Nom et prénom du declarant *: </strong>"), self.name_declarant_field)
+        declarant_formbox.addRow(FLabel("<strong>En qualité de *: </strong>"), self.quality_box)
+        declarant_formbox.addRow(FLabel("<strong>Procuration *: </strong>"), self.procuration_field)
+        declarant_formbox.addRow(FLabel("<strong>Numéro tel. du declarant *: </strong>"), self.tel_declarant_field)
         declarant_formbox.addRow(FLabel(""), self.btn)
-        self.declarantGroupBox = QGroupBox("Info. du déclarant de la {}".format(self.scoop.denomination))
-        self.declarantGroupBox.setLayout(declarant_formbox)
+        self.declarantGroupBox = QGroupBox("Info. du déclarant de la {} *".format(self.scoop.denomination))
         self.declarantGroupBox.setStyleSheet(CSS_CENTER)
-
+        self.declarantGroupBox.setLayout(declarant_formbox)
         vbox = QVBoxLayout()
-
         # vbox.addWidget(self.infoGroupBox)
         vbox.addWidget(self.declarantGroupBox)
         # vbox.addLayout(editbox)
@@ -94,13 +98,12 @@ class ImmatriculationSCoopViewWidget(FWidget):
 
         imma = Immatriculation()
         imma.scoop = self.scoop
+        imma.typ_imm = self.type_lists[self.type_box.currentIndex()][0]
         imma.name_declarant = self.name_declarant_field.text()
-        imma.quality = self.quality_box.itemData(
-            self.quality_box.currentIndex())
+        imma.quality = self.quality_box.itemData(self.quality_box.currentIndex())
         imma.procuration = self.procuration_field.text()
         imma.tel_declarant = self.tel_declarant_field.text()
         imma.save_ident()
         self.dmd.status = self.dmd.ENDPROCCES
         self.dmd.save_()
-
         self.parent.change_context(ResgistrationManagerWidget)

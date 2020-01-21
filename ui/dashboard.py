@@ -39,9 +39,6 @@ class DashbordViewWidget(FWidget):
 
         self.parent = parent
         vbox = QVBoxLayout()
-
-        # self.wc = self.width() - 400
-        # self.hc = self.height() - 150
         # self.resize(self.wc, self.hc)
         self.title = FPageTitle("TABLEAU DE BORD")
 
@@ -51,6 +48,8 @@ class DashbordViewWidget(FWidget):
 
         cc_list = CooperativeCompanie.select().order_by('-start_date')
         dataset = {
+            "wc": self.width(),
+            "hc": self.height(),
             "toal_scoop": cc_list.count(),
             "sc_coop_ca": cc_list.where(CooperativeCompanie.forme == "b").count(),
             "sc_scoops": cc_list.where(CooperativeCompanie.forme == "a").count(),

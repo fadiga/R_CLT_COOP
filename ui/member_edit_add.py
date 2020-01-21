@@ -85,10 +85,10 @@ class EditOrAddMemberDialog(QDialog, FWidget):
 
         formbox = QFormLayout()
         formbox.addRow(FormLabel(u"Nom complet : *"), self.full_name_field)
-        formbox.addRow(FormLabel(u"Sexe :"), self.sex_box)
-        formbox.addRow(FormLabel(u"Date de naissance :"), self.ddn_field)
-        formbox.addRow(FormLabel(u"Poste occupé :"), self.poste_box)
-        formbox.addRow(FormLabel(u"Nationalité :"), self.nationality_field)
+        formbox.addRow(FormLabel(u"Sexe *:"), self.sex_box)
+        formbox.addRow(FormLabel(u"Date de naissance *:"), self.ddn_field)
+        formbox.addRow(FormLabel(u"Poste occupé *:"), self.poste_box)
+        formbox.addRow(FormLabel(u"Nationalité *:"), self.nationality_field)
         formbox.addRow(FormLabel(u"Téléphone :"), self.phone_field)
         formbox.addRow(FormLabel(u"Adresse :"), self.addres_field)
 

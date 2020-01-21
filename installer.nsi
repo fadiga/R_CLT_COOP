@@ -6,7 +6,7 @@
 
   !define MUI_PRODUCT "R_coop_desktop"
   !define MUI_FILE "main"
-  !define MUI_VERSION "0.5-beta"
+  !define MUI_VERSION "0.5.3-beta"
   !define MUI_BRANDINGTEXT "${MUI_PRODUCT} ${MUI_VERSION}"
   !define IMAGES "img"
   !define CIMAGES "cimages"
@@ -14,7 +14,6 @@
   !define SOURCE "immat_source.pdf"
   !define CIMAGES_PATH "C:\Users\fadiga\Documents\GitHub\Common\${CIMAGES}"
   ;CRCCheck On
-
   !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 
 

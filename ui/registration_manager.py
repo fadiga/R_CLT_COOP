@@ -7,8 +7,7 @@
 from PyQt4.QtGui import (QVBoxLayout, QGridLayout, QIcon, QTableWidgetItem)
 
 from configuration import Config
-from Common.ui.common import (
-    LineEdit, FWidget, FPeriodHolder, FPageTitle, Button)
+from Common.ui.common import (LineEdit, FWidget, FPageTitle, Button)
 from Common.ui.table import FTableWidget
 # from Common.ui.util import (date_to_datetime, date_on_or_end)
 
@@ -105,10 +104,10 @@ class DemandeTableWidget(FTableWidget):
                 from ui.member_manager import MemberManagerWidget
                 self.parent.change_main_context(
                     MemberManagerWidget, dmd=self.choix)
-            # if status == self.choix.CHECKLIST:
-            #     from ui.check_list_view import CheckListViewWidget
-            #     self.parent.change_main_context(
-            #         CheckListViewWidget, dmd=self.choix)
+            if status == self.choix.CHECKLIST:
+                from ui.check_list_view import CheckListViewWidget
+                self.parent.change_main_context(
+                    CheckListViewWidget, dmd=self.choix)
             if status == self.choix.IMMATRICULAITON:
                 from ui.immatriculation import ImmatriculationSCoopViewWidget
                 self.parent.change_main_context(

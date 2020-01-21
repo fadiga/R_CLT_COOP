@@ -10,7 +10,7 @@ import requests
 from threading import Event
 # import time
 from configuration import Config
-
+from Common.models import License
 from models import (CooperativeCompanie, Demande,
                     Office, CooperativeMember, Immatriculation)
 # from Common.ui.statusbar import GStatusBar
@@ -29,19 +29,22 @@ class UpdaterInit(QObject):
         # self.status_bar = QStatusBar()
         self.stopFlag = Event()
         self.check = TaskThreadServer(self)
-        self.connect(self.check, SIGNAL('UpdaterInit'),
-                     self.update_data, Qt.QueuedConnection)
+        self.connect(self.check, SIGNAL('UpdaterInit'), self.update_data,
+                     Qt.QueuedConnection)
         self.check.start()
 
     def update_data(self):
-        # print("update_data")
-
+        print("update_data")
         if not internet_on(base_url):
-            # print("Pas de d'internet !")
+            print("Pas de d'internet !")
             return
 
         if Office().select().count() == 0:
             return
+        lse = License().select().where(License.id == 1).get()
+        if lse.can_expired:
+            print("can_expired")
+            # return
 
         office = Office().select().where(Office.id == 1).get()
         if not office.is_syncro:
@@ -50,7 +53,7 @@ class UpdaterInit(QObject):
                 office.updated()
 
         for model in [CooperativeCompanie, CooperativeMember, Demande, Immatriculation]:
-            # print("sending :", model)
+            print("sending :", model)
             for m in model.all():
                 if not m.is_syncro:
                     resp = self.sender("update-data", m.data())
@@ -81,5 +84,5 @@ class TaskThreadServer(QThread):
 
     def run(self):
         while not self.stopped.wait(20):
-            # print("RUN {}".format(self.stopped))
+            print("RUN {}".format(self.stopped))
             self.parent.update_data()

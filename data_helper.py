@@ -2,6 +2,7 @@
 # vim: ai ts=4 sts=4 et sw=4 nu
 # maintainer: Fadiga
 import json
+from collections import OrderedDict
 
 
 def data_json():
@@ -15,23 +16,29 @@ def data_json():
 
 
 def get_offices():
-    return data_json().get("offices")
+    r = data_json().get("offices")
+    return OrderedDict(sorted(r.items(), key=lambda kv: kv[1]['name']))
 
 
 def get_entities():
-    return data_json().get("entities")
+    # return data_json().get("entities")
+    r = data_json().get("entities")
+    return OrderedDict(sorted(r.items(), key=lambda kv: kv[1]['name']))
 
 
 def get_formes():
-    return data_json().get("formes")
+    d = data_json().get("formes")
+    return OrderedDict(sorted(d.items(), key=lambda kv: kv[1]))
 
 
 def get_postes():
-    return data_json().get("postes")
+    d = data_json().get("postes")
+    return OrderedDict(sorted(d.items(), key=lambda kv: kv[1]))
 
 
 def get_qualities():
-    return data_json().get("qualities")
+    d = data_json().get("qualities")
+    return OrderedDict(sorted(d.items(), key=lambda kv: kv[1]))
 
 
 def get_spinneret():
@@ -39,7 +46,8 @@ def get_spinneret():
 
 
 def get_activities():
-    return data_json().get("activities")
+    r = data_json().get("activities")
+    return OrderedDict(sorted(r.items(), key=lambda kv: kv[1]))
 
 
 def get_spinneret_activites(act):
@@ -50,7 +58,7 @@ def get_spinneret_activites(act):
         activity = field.get("activity")
         if activity == act:
             sp_dic.update({slug: field.get("name")})
-    return sp_dic
+    return OrderedDict(sorted(sp_dic.items(), key=lambda kv: kv[1]))
 
 
 def get_entity_name(slug):
@@ -78,7 +86,7 @@ def regions():
         type = field.get("type")
         if type == 'region':
             r_dic.update({slug: name})
-    return r_dic
+    return OrderedDict(sorted(r_dic.items(), key=lambda kv: kv[1]))
 
 
 def entity_children(p_slug):
@@ -90,4 +98,4 @@ def entity_children(p_slug):
         name = field.get("name")
         if parent == p_slug:
             c_dic.update({slug: name})
-    return c_dic
+    return OrderedDict(sorted(c_dic.items(), key=lambda kv: kv[1]))

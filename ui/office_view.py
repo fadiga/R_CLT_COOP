@@ -38,7 +38,6 @@ class NewOrEditOfficeViewWidget(QDialog, FWidget):
         self.office_box = QComboBox()
         self.office_box.currentIndexChanged.connect(self.change_select_office)
 
-        # print(get_offices())
         self.office_list = get_offices()
         self.region_box = QComboBox()
         self.region_label = FLabel()
