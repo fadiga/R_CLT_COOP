@@ -11,7 +11,7 @@ from threading import Event
 # import time
 from configuration import Config
 from Common.models import License
-from models import (CooperativeCompanie, Demande,
+from models import (CooperativeCompanie, Demande, CheckList,
                     Office, CooperativeMember, Immatriculation)
 # from Common.ui.statusbar import GStatusBar
 from Common.ui.util import internet_on
@@ -52,7 +52,7 @@ class UpdaterInit(QObject):
             if resp.get("save"):
                 office.updated()
 
-        for model in [CooperativeCompanie, CooperativeMember, Demande, Immatriculation]:
+        for model in [CooperativeCompanie, CooperativeMember, CheckList, Demande, Immatriculation]:
             print("sending :", model)
             for m in model.all():
                 if not m.is_syncro:

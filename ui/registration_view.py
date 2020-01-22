@@ -193,13 +193,15 @@ class RegistrationViewWidget(FWidget):
     def is_valide(self):
         if check_is_empty(self.denomination_field):
             return False
+
+        if CooperativeCompanie.select().where(CooperativeCompanie.denomination==self.denomination_field.text()).exists():
+            field_error(self.denomination_field, "Cette dénomination existe déjà dans la base de données !")
+            return False
         if check_is_empty(self.commercial_name_field):
             return False
         if check_is_empty(self.created_date_field):
             return False
         if check_is_empty(self.denomination_field):
-            return False
-        if check_is_empty(self.commercial_name_field):
             return False
         if check_is_empty(self.apports_numeraire_field):
             return False
@@ -233,8 +235,8 @@ class RegistrationViewWidget(FWidget):
         self.scoop = CooperativeCompanie()
         self.scoop.office = self.office
         self.scoop.created_date = str(self.created_date_field.text())
-        self.scoop.denomination = self.denomination_field.text()
-        self.scoop.commercial_name = self.commercial_name_field.text()
+        self.scoop.denomination = str(self.denomination_field.text())
+        self.scoop.commercial_name = str(self.commercial_name_field.text())
         self.scoop.activity = self.activites_box.itemData(
             self.activites_box.currentIndex())
         self.scoop.spinneret = self.spinneret_box.itemData(
@@ -282,7 +284,8 @@ class RegistrationViewWidget(FWidget):
             self.parent.change_context(ResgistrationManagerWidget)
 
     def cal_total(self):
-        total = int(self.apports_numeraire_field.text() or 0) + int(
-            self.apports_nature_field.text() or 0) + int(
+        total = is_int(
+            self.apports_numeraire_field.text() or 0) + is_int(
+            self.apports_nature_field.text() or 0) + is_int(
             self.apports_industrie_field.text() or 0)
         self.capitalSGroupBox.setTitle("7. {} :  {}".format(MONTANT_CAPITAL_SI, device_amount(total)))

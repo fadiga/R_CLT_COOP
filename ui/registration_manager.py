@@ -21,8 +21,6 @@ class ResgistrationManagerWidget(FWidget):
         super(ResgistrationManagerWidget, self).__init__(
             parent=parent, *args, **kwargs)
 
-        self.setStyleSheet(
-            "QHeaderView::section { background-color:green; color:#fff;text-transform: uppercase;font:bold }")
         self.parent = parent
 
         self.search_field = LineEdit()
@@ -66,6 +64,8 @@ class DemandeTableWidget(FTableWidget):
         FTableWidget.__init__(self, parent=parent, *args, **kwargs)
         self.parent = parent
         # self.sorter = True
+        self.setStyleSheet(
+            "QHeaderView::section {background-color:green; color:#fff;text-transform: uppercase;font:bold}")
         self.stretch_columns = [0, 1, 2, 3, 4]
         self.align_map = {0: 'l', 1: 'l', 2: 'r', 3: 'r', 4: 'r'}
         self.display_vheaders = False

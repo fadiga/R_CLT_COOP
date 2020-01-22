@@ -70,7 +70,7 @@ class MemberTableWidget(FTableWidget):
 
         FTableWidget.__init__(self, parent=parent, *args, **kwargs)
         self.setStyleSheet(
-            "QHeaderView::section { background-color:green; color:#fff;text-transform: uppercase;font:bold}")
+            "QHeaderView::section {background-color:green; color:#fff;text-transform: uppercase;font:bold}")
         self.parent = parent
         self.sorter = True
         self.stretch_columns = [0, 1, 2, 3, 4, 5]
@@ -78,8 +78,8 @@ class MemberTableWidget(FTableWidget):
         # self.display_vheaders = False
         self.hheaders = [
             "Immatricule", "Dénomination Sociale de la société coopérative",
-            "Nom Commercial / Sigle / Enseigne",
-            "Activités exercées", "Filière", "Forme de la société coopérative", "Gestion", "Fiche", ""]
+            "Nom Commercial / Sigle / Enseigne", "Activités exercées",
+            "Filière", "Forme de la société coopérative", "Gestion", "Fiche", ""]
         self.refresh_()
 
     def refresh_(self):

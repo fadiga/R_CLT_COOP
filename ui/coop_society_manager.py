@@ -164,7 +164,7 @@ class MemberTableWidget(FTableWidget):
 
         FTableWidget.__init__(self, parent=parent, *args, **kwargs)
         self.setStyleSheet(
-            "QHeaderView::section { background-color:green; color:#fff;text-transform: uppercase;font:bold}")
+            "QHeaderView::section {background-color:green; color:#fff;text-transform: uppercase;font:bold}")
         self.parent = parent
         self.dmd = self.parent.dmd
         self.sorter = True
