@@ -30,7 +30,6 @@ class Config(CConstants):
     APP_NAME = "R_coop_desktop"
     APP_VERSION = 1
     APP_DATE = u"10/2018"
-
     ARMOIRE = "img_prod"
 
     des_image_record = os.path.join(ROOT_DIR, ARMOIRE)

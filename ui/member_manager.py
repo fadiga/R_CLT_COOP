@@ -40,6 +40,8 @@ class MemberManagerWidget(FWidget, FPeriodHolder):
         self.end_demande_btt = Button("Fin de l'ajout")
         self.end_demande_btt.setMaximumWidth(400)
         self.end_demande_btt.clicked.connect(self.goto_immatriculation)
+        if self.dmd.scoop.membres().count() < 4:
+            self.end_demande_btt.setEnabled(False)
         self.new_demande_btt = Button("Nouveau Membre")
         self.new_demande_btt.setMaximumWidth(400)
         self.new_demande_btt.setIcon(QIcon.fromTheme('save', QIcon(
@@ -77,6 +79,8 @@ class MemberManagerWidget(FWidget, FPeriodHolder):
     def add_member(self):
         self.open_dialog(
             EditOrAddMemberDialog, modal=True, scoop=self.dmd.scoop, table_p=self.table)
+        if self.dmd.scoop.membres().count() >= 3:
+            self.end_demande_btt.setEnabled(True)
 
     def finder(self):
         self.search = self.search_field.text()
@@ -104,7 +108,11 @@ class MemberTableWidget(FTableWidget):
         self._reset()
         self.set_data_for()
         self.refresh()
+        self.refresh()
         self.hideColumn(len(self.hheaders) - 1)
+
+        if self.dmd.scoop.membres().count() < 1:
+            self.end_demande_btt.setEnabled(False)
 
     def set_data_for(self):
         qs = self.dmd.scoop.membres()

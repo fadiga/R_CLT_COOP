@@ -36,15 +36,15 @@ class UpdaterInit(QObject):
     def update_data(self):
         print("update_data")
         if not internet_on(base_url):
-            print("Pas de d'internet !")
+            # print("Pas de d'internet !")
             return
 
         if Office().select().count() == 0:
             return
         lse = License().select().where(License.id == 1).get()
-        if lse.can_expired:
-            print("can_expired")
-            # return
+        if not lse.isactivated:
+            print("is not activated")
+            return
 
         office = Office().select().where(Office.id == 1).get()
         if not office.is_syncro:
@@ -53,9 +53,9 @@ class UpdaterInit(QObject):
                 office.updated()
 
         for model in [CooperativeCompanie, CooperativeMember, CheckList, Demande, Immatriculation]:
-            print("sending :", model)
             for m in model.all():
                 if not m.is_syncro:
+                    print("sending :", model)
                     resp = self.sender("update-data", m.data())
                     # print("resp : ", resp)
                     if resp.get("save"):

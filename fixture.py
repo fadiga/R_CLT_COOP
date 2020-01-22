@@ -10,7 +10,6 @@ from __future__ import (unicode_literals, absolute_import, division,
 # sys.path.append(os.path.abspath('../'))
 
 from Common.fixture import AdminFixture
-from Common.models import Organization
 
 
 class FixtInit(AdminFixture):
@@ -20,4 +19,4 @@ class FixtInit(AdminFixture):
     def __init__(self):
         super(AdminFixture, self).__init__()
 
-        self.LIST_CREAT = [Organization(name_orga="SLDSES")]
+        self.LIST_CREAT += []

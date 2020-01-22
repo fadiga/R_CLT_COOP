@@ -44,6 +44,10 @@ class Office(BaseModel):
         return "{} - {} / {}".format(
             self.slug, self.region_name(), self.cercle_name())
 
+    def display_name(self):
+        return "{}-{}-{}".format(
+            self.slug, self.region_name(), self.cercle_name())
+
     def data(self):
         from configuration import Config
         import platform

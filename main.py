@@ -16,7 +16,7 @@ sys.path.append(os.path.abspath('../'))
 from migrations import make_migrate
 from Common.ui.window import FWindow
 from Common.cmain import cmain
-from Common.ui.qss import theme
+from Common.ui.style_qss import theme
 
 app = QApplication(sys.argv)
 
