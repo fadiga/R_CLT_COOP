@@ -6,7 +6,7 @@
 
   !define MUI_PRODUCT "R_coop_desktop"
   !define MUI_FILE "main"
-  !define MUI_VERSION "0.6-beta"
+  !define MUI_VERSION "1.0-alpha"
   !define MUI_BRANDINGTEXT "${MUI_PRODUCT} ${MUI_VERSION}"
   !define IMAGES "img"
   !define CIMAGES "cimages"
@@ -16,7 +16,6 @@
   ;CRCCheck On
   !include "${NSISDIR}\Contrib\Modern UI\System.nsh"
 
-
 ;---------------------------------
 ;General
 
@@ -24,7 +23,6 @@
   ShowInstDetails "nevershow"
   ShowUninstDetails "nevershow"
   ;SetCompressor off
-
   !define MUI_ICON "logo.ico"
   !define MUI_UNICON "logo.ico"
   !define MUI_SPECIALBITMAP "Bitmap.bmp"

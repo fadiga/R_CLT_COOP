@@ -15,7 +15,10 @@ class Config(CConstants):
     def __init__(self):
         CConstants.__init__(self)
 
-    # ------------------------- Organisation --------------------------#
+    from Common.models import Settings
+    from models import (CheckList, CooperativeCompanie, Immatriculation,
+                        Demande, CooperativeMember, Office)
+
     LSE = False
     DEBUG = False
     PEEWEE_V = 224
@@ -38,12 +41,14 @@ class Config(CConstants):
     APP_LOGO = os.path.join(img_media, "logo.png")
     IBS_LOGO = os.path.join(img_media, "ibs.jpg")
     APP_LOGO_ICO = os.path.join(img_media, "logo.ico")
+    # BASE_URL = "http://192.168.6.6:9009"
 
-    BASE_URL = "http://192.168.6.6:9009/"
-    # BASE_URL = "https://dnds.ml/"
+    try:
+        BASE_URL = Settings().get(Settings.id == 1).url
+    except:
+        BASE_URL = "https://dnds.ml"
+
     SERV = True
     EXCLUDE_MENU_ADMIN = []
-    from models import (CheckList, CooperativeCompanie, Immatriculation,
-                        Demande, CooperativeMember, Office)
     list_models = [Immatriculation, CooperativeMember, CooperativeCompanie,
                    Demande, CheckList, Office]

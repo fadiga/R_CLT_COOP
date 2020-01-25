@@ -2,18 +2,15 @@
 # -*- coding: utf-8 -*-
 # maintainer: fadiga
 
-# from PyQt4.QtGui import QStatusBar
 from PyQt4.QtCore import QThread, SIGNAL, QObject, Qt
 import json
 # import os
 import requests
 from threading import Event
-# import time
 from configuration import Config
 from Common.models import License
 from models import (CooperativeCompanie, Demande, CheckList,
                     Office, CooperativeMember, Immatriculation)
-# from Common.ui.statusbar import GStatusBar
 from Common.ui.util import internet_on
 
 base_url = Config.BASE_URL
@@ -65,7 +62,7 @@ class UpdaterInit(QObject):
 
     def sender(self, url, data):
         client = requests.session()
-        url_ = base_url + "scoop/" + url
+        url_ = base_url + "/scoop/" + url
         response = client.get(url_, data=json.dumps(data))
         try:
             return json.loads(response.content.decode('UTF-8'))

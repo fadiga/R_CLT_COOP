@@ -26,7 +26,7 @@ class MenuBar(FMenuBar, FWidget):
         self.parent = parent
 
         menu = [
-            {"name": u"Table de Bord", "icon": 'dashboard', "admin":
+            {"name": u"Tableau de Bord", "icon": 'dashboard', "admin":
              False, "shortcut": "Ctrl+T", "goto": DashbordViewWidget},
             {"name": u"Ajout demande", "icon": 'demande', "admin":
              False, "shortcut": "Alt+D", "goto": RegistrationViewWidget},

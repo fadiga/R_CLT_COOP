@@ -79,12 +79,14 @@ class MemberManagerWidget(FWidget, FPeriodHolder):
     def add_member(self):
         self.open_dialog(
             EditOrAddMemberDialog, modal=True, scoop=self.dmd.scoop, table_p=self.table)
-        if self.dmd.scoop.membres().count() >= 3:
-            self.end_demande_btt.setEnabled(True)
 
     def finder(self):
         self.search = self.search_field.text()
         self.table.refresh_()
+
+    def refresh_b(self):
+        if self.dmd.scoop.membres().count() >= 3:
+            self.end_demande_btt.setEnabled(True)
 
 
 class MemberTableWidget(FTableWidget):
@@ -109,10 +111,8 @@ class MemberTableWidget(FTableWidget):
         self.set_data_for()
         self.refresh()
         self.refresh()
+        self.parent.refresh_b()
         self.hideColumn(len(self.hheaders) - 1)
-
-        if self.dmd.scoop.membres().count() < 1:
-            self.end_demande_btt.setEnabled(False)
 
     def set_data_for(self):
         qs = self.dmd.scoop.membres()
