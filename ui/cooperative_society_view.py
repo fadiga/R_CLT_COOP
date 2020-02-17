@@ -14,7 +14,7 @@ from Common.ui.common import FWidget, FPageTitle, BttExportXLSX, LineEdit
 from Common.ui.table import FTableWidget
 from Common.ui.util import (uopen_file)
 
-from models import CooperativeCompanie, Demande
+from models import CooperativeCompanie, Demande, Office
 
 from configuration import Config
 
@@ -156,8 +156,8 @@ class MemberTableWidget(FTableWidget):
             scp.email,
             scp.duree_statutaire
         ) for scp in self.qs]
-        self.scp = self.qs.where(CooperativeCompanie.id == 1).get()
-        title = "SCOOP de {}".format(self.scp.display_cercle())
+        ofiice = Office.get(Office.id == 1)
+        title = "SCOOP de {}".format(ofiice.cercle_name())
         hheaders = [
             "Immatricule",
             "Dénomination Sociale de la société coopérative",
@@ -190,6 +190,6 @@ class MemberTableWidget(FTableWidget):
             'format_money': ["H:H", "I:I", "J:J", ],
             # 'exclude_row': len(self.data) - 1,
             # 'date': self.parent.now,
-            'others': [("A5", "C5", "DRDSES : {}".format(self.scp.display_region())),
-                       ("A6", "B6", "SLDSES: {}".format(self.scp.display_cercle()))],
+            'others': [("A5", "C5", "DRDSES : {}".format(ofiice.region_name())),
+                       ("A6", "B6", "SLDSES: {}".format(ofiice.cercle_name()))],
         }

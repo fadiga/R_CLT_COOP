@@ -224,7 +224,7 @@ class RegistrationViewWidget(FWidget):
         if check_is_empty(self.duree_statutaire_field):
             return False
         # print(int(self.duree_statutaire_field.text()))
-        if int(self.duree_statutaire_field.text()) > 100:
+        if int(self.duree_statutaire_field.text()) > 99:
             field_error(self.duree_statutaire_field, "La durée statutaire ne peut être supérieure à 99 ans")
             return False
         return True

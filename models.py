@@ -374,7 +374,7 @@ class Immatriculation(BaseModel):
 
     R = "R"
     N = "N"
-    TYPES = ((R, "Régularisation"), (N, "Nouveau enregistrement"))
+    TYPES = ((R, "Régularisation"), (N, "Nouvel enregistrement"))
 
     typ_imm = CharField(verbose_name="Type", choices=TYPES, default=N)
     scoop = ForeignKeyField(CooperativeCompanie)
